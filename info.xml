@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<extension key="com.joineryhq.activityical" type="module">
+  <file>activityical</file>
+  <name>Activity iCalendar Feed</name>
+  <description>Provides an iCalendar feed of assigned activities per contact</description>
+  <license>GPL-3.0</license>
+  <maintainer>
+    <author>Allen Shaw</author>
+    <email>allen@JoineryHQ.com</email>
+  </maintainer>
+  <urls>
+    <url desc="Main Extension Page">https://github.com/twomice/com.joineryhq.activityical</url>
+    <url desc="Documentation">https://github.com/twomice/com.joineryhq.activityical</url>
+    <url desc="Support">http://JoineryHQ.com</url>
+    <url desc="Licensing">http://www.gnu.org/licenses/gpl-3.0.html</url>
+  </urls>
+  <releaseDate>2016-09-07</releaseDate>
+  <version>1.0</version>
+  <develStage>alpha</develStage>
+  <compatibility>
+    <ver>4.6</ver>
+  </compatibility>
+  <comments>Based on http://drupal.org/project/civicrm_activity_ical, CMS-independent extension development sponsored by The Saturday Light Brigade.</comments>
+  <civix>
+    <namespace>CRM/Activityical</namespace>
+  </civix>
+</extension>
