@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Document   : activityical.xml
+    Created on : September 13, 2016, 6:02 PM
+    Author     : as
+    Description:
+        Purpose of the document follows.
+-->
+<root>
+  <item>
+    <path>civicrm/admin/activityical/settings</path>
+    <page_callback>CRM_Activityical_Form_Settings</page_callback>
+    <title>Settings</title>
+    <access_arguments>administer CiviCRM</access_arguments>
+  </item>
+  <item>
+    <path>civicrm/activityical/details</path>
+    <page_callback>CRM_Activityical_Form_Details</page_callback>
+    <title>Details</title>
+    <access_callback>_activityical_check_permission</access_callback>
+    <access_arguments>viewFeedDetails</access_arguments>
+  </item>
+  <item>
+    <path>civicrm/activityical/feed</path>
+    <page_callback>CRM_Activityical_Page_Feed</page_callback>
+    <title>Feed</title>
+    <access_callback>_activityical_check_permission</access_callback>
+    <access_arguments>viewFeed</access_arguments>
+  </item>
+</root>

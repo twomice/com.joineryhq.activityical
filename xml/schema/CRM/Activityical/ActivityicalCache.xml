@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+
+<table>
+  <base>CRM/Activityical</base>
+  <class>ActivityicalCache</class>
+  <name>civicrm_activityicalcache</name>
+  <comment>Cached activity iCalendar feed contents, per contact</comment>
+  <add>4.6</add>
+  <log>false</log>
+
+  <field>
+    <name>id</name>
+    <type>int unsigned</type>
+    <required>true</required>
+    <comment>Unique ActivityicalCache ID</comment>
+    <add>4.6</add>
+  </field>
+  <primaryKey>
+    <name>id</name>
+    <autoincrement>true</autoincrement>
+  </primaryKey>
+
+  <field>
+    <name>contact_id</name>
+    <type>int unsigned</type>
+    <comment>FK to Contact</comment>
+    <add>4.6</add>
+  </field>
+  <foreignKey>
+    <name>contact_id</name>
+    <table>civicrm_contact</table>
+    <key>id</key>
+    <add>4.6</add>
+    <onDelete>CASCADE</onDelete>
+  </foreignKey>
+
+  <field>
+    <name>cache</name>
+    <type>mediumtext</type>
+    <comment>Cached feed output</comment>
+    <add>4.6</add>
+  </field>
+  <field>
+    <name>cached</name>
+    <type>timestamp</type>
+    <comment>Timestamp</comment>
+    <add>4.6</add>
+  </field>
+</table>

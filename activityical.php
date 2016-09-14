@@ -3,6 +3,41 @@
 require_once 'activityical.civix.php';
 
 /**
+ * Implements hook_civicrm_permission().
+ */
+function activityical_civicrm_permission(&$permissions) {
+  $prefix = ts('Activity iCalendar Feed') . ': ';
+  $permissions['access activity iCalendar feed'] = $prefix . ts('access activity iCalendar feed');
+}
+
+/**
+ * Custom permissions checking for this extension.
+ * @param Array $access_arguments as defined in menu xml
+ * @param String $op "or" if xml <access_arguments> is comma-delimited; "and" it
+ *   it is semicolon-delimited.
+ * @return Boolean
+ */
+function _activityical_check_permission($access_arguments, $op) {
+  $checker = CRM_Activityical_Permission::singleton();
+  if ($op == 'or') {
+    foreach ($access_arguments as $method) {
+      if ($checker->$method()) {
+        return TRUE;
+      }
+    }
+    return FALSE;
+  }
+  elseif ($op == 'and') {
+    foreach ($access_arguments as $method) {
+      if (!$checker->$method()) {
+        return FALSE;
+      }
+    }
+    return TRUE;
+  }
+}
+
+/**
  * Implements hook_civicrm_config().
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_config
