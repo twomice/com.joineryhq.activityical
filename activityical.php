@@ -2,16 +2,10 @@
 
 require_once 'activityical.civix.php';
 
-/**
- * Implements hook_civicrm_permission().
- */
-function activityical_civicrm_permission(&$permissions) {
-  $prefix = ts('Activity iCalendar Feed') . ': ';
-  $permissions['access activity iCalendar feed'] = $prefix . ts('access activity iCalendar feed');
-}
 
 /**
  * Custom permissions checking for this extension.
+ * 
  * @param Array $access_arguments as defined in menu xml
  * @param String $op "or" if xml <access_arguments> is comma-delimited; "and" it
  *   it is semicolon-delimited.
