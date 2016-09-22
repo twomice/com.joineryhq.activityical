@@ -170,15 +170,15 @@ function activityical_civicrm_preProcess($formName, &$form) {
  * Implements hook_civicrm_navigationMenu().
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_navigationMenu
- *
+ */
 function activityical_civicrm_navigationMenu(&$menu) {
-  _activityical_civix_insert_navigation_menu($menu, NULL, array(
-    'label' => ts('The Page', array('domain' => 'com.joineryhq.activityical')),
-    'name' => 'the_page',
-    'url' => 'civicrm/the-page',
-    'permission' => 'access CiviReport,access CiviContribute',
-    'operator' => 'OR',
-    'separator' => 0,
+  _activityical_civix_insert_navigation_menu($menu, 'Administer/System Settings', array(
+    'label' => ts('Activity iCalendar Feed', array('domain' => 'com.joineryhq.activityical')),
+    'name' => 'Activity iCalendar Feed',
+    'url' => 'civicrm/admin/activityical/settings',
+    'permission' => 'administer CiviCRM',
+    'operator' => 'AND',
+    'separator' => NULL,
   ));
   _activityical_civix_navigationMenu($menu);
 } // */
@@ -190,15 +190,48 @@ function activityical_civicrm_navigationMenu(&$menu) {
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_pageRun
  */
 function activityical_civicrm_pageRun(&$page) {
-  if (!empty($_GET['snippet']) && $_GET['snippet'] == 'json' && get_class($page) == 'CRM_Activity_Page_Tab') {
+  $page_name = $page->getVar('_name');
+
+  // Conditionally add a status message pointing to the activities iCal feed.
+  // Only on the user dashboard, and only if the current user has permissions
+  if ($page_name == 'CRM_Contact_Page_View_UserDashBoard') {
+    $contact_id = $page->_contactId;
+
+    if (_activityical_contact_has_feed_group($contact_id)) {
+      $tpl = CRM_Core_Smarty::singleton();
+      // Only if this CiviCRM is showing activities on the user dashboard
+      if (isset($tpl->_tpl_vars['activity_rows']) || isset($tpl->_tpl_vars['activity_rowsEmpty'])) {
+        $url_query = array(
+          'contact_id'=> $contact_id,
+        );
+        $feed_details_url = CRM_Utils_System::url('civicrm/activityical/details', $url_query, TRUE, NULL, FALSE);
+        CRM_Core_Session::setStatus(ts('Assigned activities are accessible as an iCalendar feed.') . ' '. '<a href="'. $feed_details_url . '">'. ts('Feed details...') . '</a>');
+      }
+    }
+  }
+
+  if (!empty($_GET['snippet']) && $_GET['snippet'] == 'json' && $page_name == 'CRM_Activity_Page_Tab') {
     if(implode('/', $page->urlPath) == 'civicrm/contact/view/activity') {
       // Do this only on the contact Activities tab.
+
+      $contact_id = $page->_contactId;
+      if (!_activityical_contact_has_feed_group($contact_id)) {
+        // Contact cannot have a feed. We'll add no links. Just return.
+        return;
+      }
 
       // Prepare to parse a Smarty template.
       $tpl = CRM_Core_Smarty::singleton();
 
+      // Figure out if we should display the "details" link.
+      if (
+        CRM_Core_Permission::check('administer CiviCRM')
+        || $contact_id == CRM_Core_Session::singleton()->getLoggedInContactID()
+      ) {
+        $tpl->assign('access_details', TRUE);
+      }
+
       // Get the feed details URL for this contact.
-      $contact_id = $page->_contactId;
       $url_query = array(
         'contact_id'=> $contact_id,
       );
@@ -223,3 +256,25 @@ function activityical_civicrm_pageRun(&$page) {
     }
   }
 }
+
+function _activityical_contact_has_feed_group($contact_id) {
+  // Check $this->_params['contact_id'] that they have the right civicrm group.
+  $result = civicrm_api3('setting', 'get', array('return' => 'activityical_group_id'));
+  $domainID = CRM_Core_Config::domainID();
+  $group_id = $result['values'][$domainID]['activityical_group_id'];
+  if (empty($group_id)) {
+    // No group defined; nobody can be in an undefined group.
+    return FALSE;
+  }
+  $api_params = array (
+    'group_id' => $group_id,
+    'contact_id' => $contact_id,
+  );
+  $result = civicrm_api3('group_contact', 'get', $api_params);
+  if (!$result['count']) {
+    return FALSE;
+  }
+
+  return TRUE;
+}
+

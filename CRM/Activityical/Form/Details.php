@@ -12,7 +12,10 @@ class CRM_Activityical_Form_Details extends CRM_Core_Form {
   var $contact_id;
 
   public function preProcess() {
-    $this->contact_id = CRM_Utils_Array::value('contact_id', $_GET, NULL);
+    $this->contact_id = CRM_Utils_Array::value('contact_id', $_GET, CRM_Core_Session::singleton()->getLoggedInContactID());
+    if (!_activityical_contact_has_feed_group($this->contact_id)) {
+      CRM_Core_Error::statusBounce(ts('The given contact does not have an activities iCalendar feed.'));
+    }
     $this->feed = new CRM_Activityical_Feed($this->contact_id);
   }
 

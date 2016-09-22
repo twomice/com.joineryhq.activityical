@@ -56,21 +56,8 @@ class CRM_Activityical_Permission {
     if (empty($contact_id) || empty($hash)) {
       return FALSE;
     }
-    
-    // Check $this->_params['contact_id'] that they have the right civicrm group.
-    $existing = civicrm_api3('setting', 'get', array('return' => 'activityical_group_id'));
-    $domainID = CRM_Core_Config::domainID();
-    $group_id = $existing['values'][$domainID]['activityical_group_id'];
-    if (empty($group_id)) {
-      // No group defined; nobody can be in an undefined group.
-      return FALSE;
-    }
-    $api_params = array (
-      'group_id' => $group_id,
-      'contact_id' => $contact_id,
-    );
-    $result = civicrm_api3('group_contact', 'get', $api_params);
-    if (!$result['count']) {
+
+    if (!_activityical_contact_has_feed_group($contact_id)){
       return FALSE;
     }
 
@@ -85,8 +72,10 @@ class CRM_Activityical_Permission {
   public function manageFeedDetails() {
     // Only allow access if no contact_id is given (working on my own contact)
     // or user has 'administer civicrm'.
+    $contact_id = CRM_Utils_Array::value('contact_id', $this->_params);
     return (
-      CRM_Utils_Array::value('contact_id', $this->_params)
+      !$contact_id
+      || $contact_id == CRM_Core_Session::singleton()->getLoggedInContactID()
       || CRM_Core_Permission::check('administer CiviCRM')
     );
   }
