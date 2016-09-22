@@ -1,5 +1,5 @@
 div.activityical-feed-url-display input{
-  width: 100%;
+  width: 90%;
 }
 
 div#activityical-header-rebuild-url {
@@ -9,4 +9,8 @@ div#activityical-header-rebuild-url {
 div#activityical-activity-links {
   margin-left: 4em;
   display: inline-block;
+}
+
+select.activityical-settings-select {
+  height: auto !important;
 }

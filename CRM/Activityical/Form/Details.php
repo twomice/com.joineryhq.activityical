@@ -13,8 +13,10 @@ class CRM_Activityical_Form_Details extends CRM_Core_Form {
 
   public function preProcess() {
     $this->contact_id = CRM_Utils_Array::value('contact_id', $_GET, CRM_Core_Session::singleton()->getLoggedInContactID());
-    if (!_activityical_contact_has_feed_group($this->contact_id)) {
-      CRM_Core_Error::statusBounce(ts('The given contact does not have an activities iCalendar feed.'));
+    if (!$this->_flagSubmitted) {
+      if (!_activityical_contact_has_feed_group($this->contact_id)) {
+        CRM_Core_Error::statusBounce(ts('The given contact does not have an activities iCalendar feed.'));
+      }
     }
     $this->feed = new CRM_Activityical_Feed($this->contact_id);
   }
@@ -77,7 +79,7 @@ class CRM_Activityical_Form_Details extends CRM_Core_Form {
     $this->feed->generateHash();
     CRM_Core_Session::setStatus(" ", ts('URL rebuilt'), "success");
     $extra = (!empty($this->_submitValues['contact_id']) ? "&contact_id={$this->_submitValues['contact_id']}" : '');
-    CRM_Utils_System::redirect('/civicrm/activityical/details?reset=1' . $extra);
+    CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/activityical/details', 'reset=1' . $extra));
   }
 
   public function setDefaultValues() {

@@ -67,6 +67,8 @@ class CRM_Activityical_Form_Settings extends CRM_Core_Form {
       )
     ));
 
+    CRM_Core_Resources::singleton()->addStyleFile('com.joineryhq.activityical', 'css/activityical.css');
+
     // export form elements
     $this->assign('elementNames', $this->getRenderableElementNames());
     parent::buildQuickForm();
@@ -75,6 +77,7 @@ class CRM_Activityical_Form_Settings extends CRM_Core_Form {
   function postProcess() {
     $this->_submittedValues = $this->exportValues();
     $this->saveSettings();
+    CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/admin/activityical/settings', 'reset=1'));
     parent::postProcess();
   }
 
@@ -123,9 +126,7 @@ class CRM_Activityical_Form_Settings extends CRM_Core_Form {
 
     // Save any that are not submitted, as well (e.g., checkboxes that aren't checked).
     $unsettings = array_fill_keys(array_keys(array_diff_key($settings, $this->_submittedValues)), NULL);
-    civicrm_api3('setting', 'create', $unsettings);
-    
-    CRM_Utils_System::redirect('/civicrm/admin/activityical/settings?reset=1');
+    civicrm_api3('setting', 'create', $unsettings);    
   }
 
   /**

@@ -15,7 +15,7 @@ return array(
     'html_type' => 'Select',
     'html_attributes' => array(
       'size' => 10,
-      'class' => 'crm-form-multiselect',
+      'class' => 'crm-form-multiselect activityical-settings-select',
     ),
     'quick_form_type' => 'Element',
     'X_options_callback' => 'CRM_Activityical_Form_Settings::getGroupOptions'
