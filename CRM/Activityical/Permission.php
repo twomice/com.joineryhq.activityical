@@ -49,10 +49,36 @@ class CRM_Activityical_Permission {
   }
 
   public function viewFeed() {
-    dsm('FIXME: '. __CLASS__ . '::' . __METHOD__ .' always returns TRUE.');
-    dsm($this->_params, 'params in '. __CLASS__ . '::' . __METHOD__);
-    // TODO: check $this->_params['cid'] that they have the right civicrm group.
-    // TODO: check $this->_params['hash'] that it matches $this->_params['cid'].
+    $contact_id = CRM_Utils_Array::value('cid', $this->_params);
+    $hash = CRM_Utils_Array::value('key', $this->_params);
+
+    // Ensure correct parameters.
+    if (empty($contact_id) || empty($hash)) {
+      return FALSE;
+    }
+    
+    // Check $this->_params['contact_id'] that they have the right civicrm group.
+    $existing = civicrm_api3('setting', 'get', array('return' => 'activityical_group_id'));
+    $domainID = CRM_Core_Config::domainID();
+    $group_id = $existing['values'][$domainID]['activityical_group_id'];
+    if (empty($group_id)) {
+      // No group defined; nobody can be in an undefined group.
+      return FALSE;
+    }
+    $api_params = array (
+      'group_id' => $group_id,
+      'contact_id' => $contact_id,
+    );
+    $result = civicrm_api3('group_contact', 'get', $api_params);
+    if (!$result['count']) {
+      return FALSE;
+    }
+
+    // Check $this->_params['key'] that it matches $this->_params['contact_id'].
+    $feed = new CRM_Activityical_Feed($contact_id);
+    if (!$feed->validateHash($hash)) {
+      return FALSE;
+    }
     return TRUE;
   }
 

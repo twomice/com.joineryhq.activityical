@@ -34,5 +34,12 @@ CREATE TABLE IF NOT EXISTS `civicrm_activityicalcontact` (
   `contact_id` int(10) unsigned DEFAULT NULL COMMENT 'FK to Contact',
   `hash` varchar(32) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'Private hash per feed',
   PRIMARY KEY (`id`),
+  CONSTRAINT FK_civicrm_activityicalcontact_contact_id FOREIGN KEY (`contact_id`) REFERENCES `civicrm_contact`(`id`) ON DELETE CASCADE,
   UNIQUE KEY `contact_id` (`contact_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Constraints for table `civicrm_activityicalcontact`
+--
+--ALTER TABLE `civicrm_activityicalcontact`
+--   ADD CONSTRAINT `civicrm_activityicalcontact_ibfk_1` FOREIGN KEY (`contact_id`) REFERENCES `civicrm_contact` (`id`) ON DELETE CASCADE;
