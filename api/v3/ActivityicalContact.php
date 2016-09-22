@@ -44,3 +44,14 @@ function civicrm_api3_activityical_contact_delete($params) {
 function civicrm_api3_activityical_contact_get($params) {
   return _civicrm_api3_basic_get(_civicrm_api3_get_BAO(__FUNCTION__), $params);
 }
+
+/**
+ * Get DAO name
+ *
+ * @param array $params
+ * @return array API result descriptor
+ * @throws API_Exception
+ */
+function _civicrm_api3_activityical_contact_DAO($params) {
+  return 'CRM_Activityical_DAO_ActivityicalContact';
+}

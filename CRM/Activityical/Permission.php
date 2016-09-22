@@ -50,21 +50,18 @@ class CRM_Activityical_Permission {
 
   public function viewFeed() {
     dsm('FIXME: '. __CLASS__ . '::' . __METHOD__ .' always returns TRUE.');
-    dsm($this->_params, 'params');
+    dsm($this->_params, 'params in '. __CLASS__ . '::' . __METHOD__);
     // TODO: check $this->_params['cid'] that they have the right civicrm group.
     // TODO: check $this->_params['hash'] that it matches $this->_params['cid'].
     return TRUE;
   }
 
-  public function viewFeedDetails() {
-    dsm('FIXME: '. __CLASS__ . '::' . __METHOD__ .' always returns TRUE.');
-    dsm($this->_params, 'params');
-
-    // TODO: $contact_id = ($this->_params['cid'] || current user's cid)
-    // 
-    // TODO: check that user has 'access civicrm'
-    // TODO: check that user has 'administer civicrm'
-    //    OR that $contact_id matches user's cid
-    return TRUE;
+  public function manageFeedDetails() {
+    // Only allow access if no contact_id is given (working on my own contact)
+    // or user has 'administer civicrm'.
+    return (
+      CRM_Utils_Array::value('contact_id', $this->_params)
+      || CRM_Core_Permission::check('administer CiviCRM')
+    );
   }
 }

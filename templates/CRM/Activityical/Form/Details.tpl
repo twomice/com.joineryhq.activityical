@@ -1,27 +1,23 @@
 {* HEADER *}
+{if $display_name}
+<h2>{ts}Details for contact{/ts}: {$display_name}</h2>
+{/if}
 
-<div class="crm-submit-buttons">
-{include file="CRM/common/formButtons.tpl" location="top"}
+<div class="crm-section">
+  <div>{ts}Your CiviCRM assigned activities feed is available at this URL{/ts}:</div>
+  <div class="activityical-feed-url-display"><input type="text" value="{$feed_url}" id="feed_url" readonly="readonly"/></div>
 </div>
 
-{* FIELD EXAMPLE: OPTION 1 (AUTOMATIC LAYOUT) *}
-
-{foreach from=$elementNames item=elementName}
-  <div class="crm-section">
-    <div class="label">{$form.$elementName.label}</div>
-    <div class="content">{$form.$elementName.html}</div>
-    <div class="clear"></div>
-  </div>
-{/foreach}
-
-{* FIELD EXAMPLE: OPTION 2 (MANUAL LAYOUT)
-
-  <div>
-    <span>{$form.favorite_color.label}</span>
-    <span>{$form.favorite_color.html}</span>
-  </div>
+{$form.contact_id.html}
 
 {* FOOTER *}
-<div class="crm-submit-buttons">
-{include file="CRM/common/formButtons.tpl" location="bottom"}
+<div class="header-dark" id="header-rebuild-url">{ts}Rebuild feed URL{/ts}</div>
+<div class="view-content">
+  <p>
+  {ts}Anyone who knows your feed URL will be able to view your activities. If you think this URL is known by people who should not have that access, you can rebuild a new URL, so that any existing URL no longer works.{/ts}
+  </p>
+  <p>
+  {ts}Note: This will cause the existing URL to stop working, so if you're already using the URL in your calendar software (Google Calendar, etc.), you'll need to update that software with the new URL.{/ts}
+  </p>
+  {include file="CRM/common/formButtons.tpl" location="bottom"}
 </div>

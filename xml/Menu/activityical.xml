@@ -16,9 +16,9 @@
   <item>
     <path>civicrm/activityical/details</path>
     <page_callback>CRM_Activityical_Form_Details</page_callback>
-    <title>Details</title>
+    <title>CiviCRM Activities iCalendar Feed: Details</title>
     <access_callback>_activityical_check_permission</access_callback>
-    <access_arguments>viewFeedDetails</access_arguments>
+    <access_arguments>manageFeedDetails</access_arguments>
   </item>
   <item>
     <path>civicrm/activityical/feed</path>

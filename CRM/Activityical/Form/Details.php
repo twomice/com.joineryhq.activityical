@@ -8,50 +8,71 @@ require_once 'CRM/Core/Form.php';
  * @see http://wiki.civicrm.org/confluence/display/CRMDOC43/QuickForm+Reference
  */
 class CRM_Activityical_Form_Details extends CRM_Core_Form {
-  public function buildQuickForm() {
+  var $feed;
+  var $contact_id;
 
-    // add form elements
-    $this->add(
-      'select', // field type
-      'favorite_color', // field name
-      'Favorite Color', // field label
-      $this->getColorOptions(), // list of options
-      TRUE // is required
-    );
+  public function preProcess() {
+    $this->contact_id = CRM_Utils_Array::value('contact_id', $_GET, NULL);
+    $this->feed = new CRM_Activityical_Feed($this->contact_id);
+  }
+
+  public function buildQuickForm() {
+    $this->assign('feed_url', $this->feed->getUrl());
+
+    // Show the contact's display name if it's not the current user's contact.
+    if ($this->contact_id && ($this->contact_id != CRM_Core_Session::singleton()->getLoggedInContactID())) {
+      $not_found_error = ts('Could not find the given contact.');
+      $api_params = array(
+        'sequential' => 1,
+        'id' => $this->contact_id,
+      );
+      try {
+        $result = civicrm_api3('contact', 'get', $api_params);
+      }
+      catch (CiviCRM_API3_Exception $e) {
+          CRM_Core_Error::statusBounce($not_found_error);
+      }
+      if (empty($result['id'])) {
+        CRM_Core_Error::statusBounce($not_found_error);
+      }
+      $this->assign('display_name', ($result['values'][0]['display_name'] ?: ts('[contact ID %1]', $this->contact_id)));
+    }
+
+    $this->addElement('hidden', 'contact_id');
+
+    // add form buttons
     $this->addButtons(array(
       array(
         'type' => 'submit',
-        'name' => ts('Submit'),
+        'name' => ts('Rebuild feed URL now'),
         'isDefault' => TRUE,
       ),
     ));
 
     // export form elements
     $this->assign('elementNames', $this->getRenderableElementNames());
+
+    // Add form resources.
+    CRM_Core_Resources::singleton()->addStyleFile('com.joineryhq.activityical', 'css/activityical.css');
+    CRM_Core_Resources::singleton()->addScriptFile('com.joineryhq.activityical', 'js/activityical_feed_details.js');
+
     parent::buildQuickForm();
   }
 
   public function postProcess() {
-    $values = $this->exportValues();
-    $options = $this->getColorOptions();
-    CRM_Core_Session::setStatus(ts('You picked color "%1"', array(
-      1 => $options[$values['favorite_color']]
-    )));
-    parent::postProcess();
+    // This form really only does one thing if submitted, which is to rebuild
+    // the feed URL.
+    $this->feed = new CRM_Activityical_Feed($this->_submitValues['contact_id']);
+    $this->feed->generateHash();
+    CRM_Core_Session::setStatus(" ", ts('URL rebuilt'), "success");
+    $extra = (!empty($this->_submitValues['contact_id']) ? "&contact_id={$this->_submitValues['contact_id']}" : '');
+    CRM_Utils_System::redirect('/civicrm/activityical/details?reset=1' . $extra);
   }
 
-  public function getColorOptions() {
-    $options = array(
-      '' => ts('- select -'),
-      '#f00' => ts('Red'),
-      '#0f0' => ts('Green'),
-      '#00f' => ts('Blue'),
-      '#f0f' => ts('Purple'),
+  public function setDefaultValues() {
+    return array(
+      'contact_id' => $this->contact_id,
     );
-    foreach (array('1','2','3','4','5','6','7','8','9','a','b','c','d','e') as $f) {
-      $options["#{$f}{$f}{$f}"] = ts('Grey (%1)', array(1 => $f));
-    }
-    return $options;
   }
 
   /**
