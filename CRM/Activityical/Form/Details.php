@@ -35,16 +35,24 @@ class CRM_Activityical_Form_Details extends CRM_Core_Form {
       if (empty($result['id'])) {
         CRM_Core_Error::statusBounce($not_found_error);
       }
-      $this->assign('display_name', ($result['values'][0]['display_name'] ?: ts('[contact ID %1]', $this->contact_id)));
+      $this->assign('is_other_contact', TRUE);
+      $display_name = ($result['values'][0]['display_name'] ?: ts('[contact ID %1]', array(1 => $this->contact_id)));
+      $this->assign('display_name', $display_name);
     }
 
     $this->addElement('hidden', 'contact_id');
 
     // add form buttons
+    if (!empty($display_name)) {
+      $button_name = ts('Rebuild feed URL now, for %1', array(1 => $display_name));
+    }
+    else {
+      $button_name = ts('Rebuild feed URL now');
+    }
     $this->addButtons(array(
       array(
         'type' => 'submit',
-        'name' => ts('Rebuild feed URL now'),
+        'name' => $button_name,
         'isDefault' => TRUE,
       ),
     ));

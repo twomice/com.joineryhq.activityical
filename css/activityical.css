@@ -2,6 +2,11 @@ div.activityical-feed-url-display input{
   width: 100%;
 }
 
-div#header-rebuild-url {
+div#activityical-header-rebuild-url {
   margin-top: 4em;
+}
+
+div#activityical-activity-links {
+  margin-left: 4em;
+  display: inline-block;
 }

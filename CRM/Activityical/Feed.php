@@ -229,8 +229,7 @@ class CRM_Activityical_Feed {
     $domain = parse_url('http://'. $_SERVER['HTTP_HOST'], PHP_URL_HOST);
     $tpl->assign('domain', $domain);
 
-    $template = 'CRM/Activityical/common/Feed.tpl';
-    $output = $tpl->fetch($template);
+    $output = $tpl->fetch('CRM/Activityical/snippet/Feed.tpl');
     return $output;
   }
 
