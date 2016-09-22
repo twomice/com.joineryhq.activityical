@@ -197,10 +197,18 @@ class CRM_Activityical_Feed {
       if ($row['activity_details']) {
         $description[] = preg_replace('/(\n|\r)/', '', $row['activity_details']);
       }
-      if ($row['targets']) {
+
+      $settings = array('activityical_description_append_targets', 'activityical_description_append_assignees');
+      $result = civicrm_api3('setting', 'get', array('return' => $settings));
+      $domainID = CRM_Core_Config::domainID();
+      foreach ($settings as $setting) {
+        $$setting = CRM_Utils_Array::value($setting, $result['values'][$domainID]);
+      }
+
+      if ($activityical_description_append_targets && $row['targets']) {
         $description[] = 'With: '. $row['targets'];
       }
-      if ($row['other_assignees']) {
+      if ($activityical_description_append_assignees && $row['other_assignees']) {
         $description[] = 'Other assignees: '. $row['other_assignees'];
       }
       $row['description'] = implode("\n", $description);

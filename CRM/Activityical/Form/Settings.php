@@ -47,7 +47,7 @@ class CRM_Activityical_Form_Settings extends CRM_Core_Form {
           default:
             $add = 'add' . $setting['quick_form_type'];
             if ($add == 'addElement') {
-              $this->$add($setting['html_type'], $name, ts($setting['title']), CRM_Utils_Array::value('html_attributes', $setting, array ()));
+              $this->$add($setting['html_type'], $name, ts($setting['title']), CRM_Utils_Array::value('html_attributes', $setting, array()));
             }
             else {
               $this->$add($name, ts($setting['title']));
@@ -120,6 +120,12 @@ class CRM_Activityical_Form_Settings extends CRM_Core_Form {
     $settings = $this->getFormSettings();
     $values = array_intersect_key($this->_submittedValues, $settings);
     civicrm_api3('setting', 'create', $values);
+
+    // Save any that are not submitted, as well (e.g., checkboxes that aren't checked).
+    $unsettings = array_fill_keys(array_keys(array_diff_key($settings, $this->_submittedValues)), NULL);
+    civicrm_api3('setting', 'create', $unsettings);
+    
+    CRM_Utils_System::redirect('/civicrm/admin/activityical/settings?reset=1');
   }
 
   /**
@@ -128,10 +134,10 @@ class CRM_Activityical_Form_Settings extends CRM_Core_Form {
    * @see CRM_Core_Form::setDefaultValues()
    */
   function setDefaultValues() {
-    $existing = civicrm_api3('setting', 'get', array('return' => array_keys($this->getFormSettings())));
+    $result = civicrm_api3('setting', 'get', array('return' => array_keys($this->getFormSettings())));
     $defaults = array();
     $domainID = CRM_Core_Config::domainID();
-    foreach ($existing['values'][$domainID] as $name => $value) {
+    foreach ($result['values'][$domainID] as $name => $value) {
       $defaults[$name] = $value;
     }
     return $defaults;
@@ -151,6 +157,11 @@ class CRM_Activityical_Form_Settings extends CRM_Core_Form {
   public function getSettingOptions($setting) {
     if (!empty($setting['X_options_callback']) && is_callable($setting['X_options_callback'])) {
       return call_user_func($setting['X_options_callback']);
+    }
+    elseif (strtolower($setting['type']) == 'boolean') {
+      return array(
+        1 => '',
+      );
     }
     else {
       return NULL;

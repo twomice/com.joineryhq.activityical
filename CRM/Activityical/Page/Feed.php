@@ -12,7 +12,7 @@ class CRM_Activityical_Page_Feed extends CRM_Core_Page {
     $time = time();
     header('Last-Modified: ' . gmdate('D, d M Y H:i:s \G\M\T', $time));
     require_once 'CRM/Utils/ICalendar.php';
-    CRM_Utils_ICalendar::send($output);
+    CRM_Utils_ICalendar::send($output, 'text/calendar', NULL, 'civicrm_activities.ical', 'attachment');
     exit;
   }
 }
