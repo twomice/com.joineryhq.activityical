@@ -72,7 +72,7 @@ class CRM_Activityical_Feed {
       'cid'=> $this->contact_id,
       'key' => $this->hash,
     );
-    $url = CRM_Utils_System::url('civicrm/activityical/feed', $url_query, TRUE, NULL, FALSE);
+    $url = CRM_Utils_System::url('civicrm/activityical/feed', $url_query, TRUE, NULL, FALSE, TRUE);
     return $url;
   }
 
