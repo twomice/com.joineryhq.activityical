@@ -117,6 +117,14 @@ class CRM_Activityical_Feed {
       'Integer',
     );
 
+    $i = $placeholder_count++;
+    $placeholders['activityical_max_age_days'] = '%' . $i;
+    $result = civicrm_api3('setting', 'get', array('return' => array('activityical_max_age_days')));
+    $params[$i] = array(
+      CRM_Utils_Array::value('activityical_max_age_days', $result['values'][CRM_Core_Config::domainID()], 0),
+      'Integer',
+    );
+    
     $query = "
       SELECT
         contact_primary.id as contact_id,
@@ -185,7 +193,7 @@ class CRM_Activityical_Feed {
           (". implode(',', $placeholders['status']) . ")
         AND contact_primary.id = '{$placeholders['contact_id']}'
         AND civicrm_activity.is_test = 0
-        AND civicrm_activity.activity_date_time > now()
+        AND civicrm_activity.activity_date_time > (CURRENT_DATE - INTERVAL {$placeholders['activityical_max_age_days']} DAY)
       GROUP BY civicrm_activity.id
       ORDER BY activity_date_time desc
     ";

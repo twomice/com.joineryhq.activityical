@@ -56,6 +56,12 @@ class CRM_Activityical_Form_Settings extends CRM_Core_Form {
         }
       }
       $descriptions[$setting['name']] = ts($setting['description']);
+
+      if (!empty($setting['X_form_rule_args'])) {
+        $args = $setting['X_form_rule_args'];
+        array_unshift($args, $setting['name']);
+        call_user_func_array(array($this, 'addRule'), $args);
+      }
     }
     $this->assign("descriptions", $descriptions);
 
@@ -126,7 +132,10 @@ class CRM_Activityical_Form_Settings extends CRM_Core_Form {
 
     // Save any that are not submitted, as well (e.g., checkboxes that aren't checked).
     $unsettings = array_fill_keys(array_keys(array_diff_key($settings, $this->_submittedValues)), NULL);
-    civicrm_api3('setting', 'create', $unsettings);    
+    civicrm_api3('setting', 'create', $unsettings);
+
+    CRM_Core_Session::setStatus(" ", ts('Settings saved.'), "success");
+
   }
 
   /**
@@ -145,7 +154,9 @@ class CRM_Activityical_Form_Settings extends CRM_Core_Form {
   }
 
   public static function getGroupOptions() {
-    $options = array();
+    $options = array(
+      0 => '- '. ts('none') . '-',
+    );
     $result = civicrm_api3('Group', 'get', array(
       'is_active' => 1,
     ));
