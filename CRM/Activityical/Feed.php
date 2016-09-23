@@ -185,6 +185,7 @@ class CRM_Activityical_Feed {
           (". implode(',', $placeholders['status']) . ")
         AND contact_primary.id = '{$placeholders['contact_id']}'
         AND civicrm_activity.is_test = 0
+        AND civicrm_activity.activity_date_time > now()
       GROUP BY civicrm_activity.id
       ORDER BY activity_date_time desc
     ";
