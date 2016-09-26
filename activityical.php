@@ -280,9 +280,6 @@ function _activityical_contact_has_feed_group($contact_id) {
 
 /**
  * Implements hook_civicrm_entityTypes.
- *
- * @param array $entityTypes
- *   Registered entity types.
  */
 function activityical_civicrm_entityTypes(&$entityTypes) {
  $entityTypes['CRM_Activityical_DAO_ActivityicalContact'] = array(
@@ -295,4 +292,55 @@ function activityical_civicrm_entityTypes(&$entityTypes) {
    'class' => 'CRM_Activityical_DAO_ActivityicalCache',
    'table' => 'civicrm_activityicalcache',
  );
+}
+
+/**
+ * Implements hook_civicrm_pre.
+ */
+function activityical_civicrm_pre($op, $objectName, $objectId, &$params) {
+  if ($objectName == 'Activity' && (
+    $op == 'edit'
+    || $op == 'delete'
+  )) {
+    // If we're changing an activity, clear activityical cache for any new or
+    // old assignees.
+    $id = $objectId ?: CRM_Utils_Array::value('id', $params);
+    if ($id) {
+      $contact_ids = array();
+      $api_params = array(
+        'activity_id' => $id,
+        'record_type_id' => 1,
+      );
+      $result = civicrm_api3('activity_contact', 'get', $api_params);
+      foreach ($result['values'] as $value) {
+        $contact_ids[$value['contact_id']] = 1;
+      }
+      foreach (CRM_Utils_Array::value('assignee_contact_id', $params) as $contact_id) {
+        $contact_ids[$contact_id] = 1;
+      }
+      foreach(array_keys($contact_ids) as $contact_id) {
+        $cache = new CRM_Activityical_Cache($contact_id);
+        $cache->clear();
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_civicrm_post.
+ */
+function activityical_civicrm_post($op, $objectName, $objectId, &$objectRef) {
+  if ($objectName == 'Activity' && $op == 'create') {
+    // If we've created an activity, clear activityical cache for any assignees.
+    $contact_ids = array();
+    $api_params = array(
+      'activity_id' => $objectId,
+      'record_type_id' => 1,
+    );
+    $result = civicrm_api3('activity_contact', 'get', $api_params);
+    foreach ($result['values'] as $value) {
+      $cache = new CRM_Activityical_Cache($value['contact_id']);
+      $cache->clear();
+    }
+  }
 }

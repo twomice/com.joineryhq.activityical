@@ -49,7 +49,7 @@ class CRM_Activityical_Feed {
       'contact_id' => $this->contact_id,
     );
     $result = civicrm_api3('activityical_contact', 'get', $params);
-    $id = $result['id'];
+    $id = CRM_Utils_Array::value('id', $result);
  
     $params = array(
       'id' => $id,
@@ -89,14 +89,7 @@ class CRM_Activityical_Feed {
     // Placeholders for blocked statuses
     // TODO: this should be a setting.
     $values = CRM_Core_OptionGroup::values('activity_status');
-    $blocked_statuses = array(
-      'Completed',
-      'Cancelled',
-      'Left Message',
-      'Unreachable',
-      'Not Required',
-    );
-    $blocked_status_values = array_keys(array_intersect($values, $blocked_statuses));
+    $blocked_status_values = array_keys(array_intersect($values, self::getBlockedStatuses()));
 
     if (empty($blocked_status_values)) {
       $blocked_status_values[] = 0;
@@ -233,7 +226,14 @@ class CRM_Activityical_Feed {
 
   public function getContents() {
     // TODO: add caching.
+    $cache = new CRM_Activityical_Cache($this->contact_id);
+    if (empty($cache->retrieve())) {
+      $cache->store($this->getFeed());
+    }
+    return $cache->retrieve();
+  }
 
+  public function getFeed() {
     // Require a file from CiviCRM's dynamic include path.
     require_once 'CRM/Core/Smarty.php';
     $tpl = CRM_Core_Smarty::singleton();
@@ -251,4 +251,13 @@ class CRM_Activityical_Feed {
     return $output;
   }
 
+  public static function getBlockedStatuses() {
+    $blocked_statuses = array(
+      'Completed',
+      'Cancelled',
+      'Left Message',
+      'Unreachable',
+      'Not Required',
+    );
+  }
 }

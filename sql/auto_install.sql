@@ -9,18 +9,14 @@ DROP TABLE IF EXISTS `civicrm_activityicalcontact`;
 -- *
 -- *******************************************************/
 CREATE TABLE `civicrm_activityicalcache` (
-
-
-     `id` int unsigned NOT NULL AUTO_INCREMENT  COMMENT 'Unique ActivityicalCache ID',
-     `contact_id` int unsigned    COMMENT 'FK to Contact',
-     `cache` mediumtext    COMMENT 'Cached feed output',
-     `cached` timestamp    COMMENT 'Timestamp'
-,
-    PRIMARY KEY ( `id` )
-
-
-,          CONSTRAINT FK_civicrm_activityicalcache_contact_id FOREIGN KEY (`contact_id`) REFERENCES `civicrm_contact`(`id`) ON DELETE CASCADE
-)  ENGINE=InnoDB DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci  ;
+  `id` int unsigned NOT NULL AUTO_INCREMENT  COMMENT 'Unique ActivityicalCache ID',
+  `contact_id` int unsigned    COMMENT 'FK to Contact',
+  `cache` mediumtext    COMMENT 'Cached feed output',
+  `cached` timestamp    COMMENT 'Timestamp',
+  PRIMARY KEY ( `id` ),
+  CONSTRAINT FK_civicrm_activityicalcache_contact_id FOREIGN KEY (`contact_id`) REFERENCES `civicrm_contact`(`id`) ON DELETE CASCADE,
+  UNIQUE KEY `contact_id` (`contact_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- /*******************************************************
 -- *
