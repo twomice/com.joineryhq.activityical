@@ -47,11 +47,7 @@ function civicrm_api3_activityical_contact_get($params) {
 
 /**
  * Get DAO name
- *
- * @param array $params
- * @return array API result descriptor
- * @throws API_Exception
  */
-function _civicrm_api3_activityical_contact_DAO($params) {
+function _civicrm_api3_activityical_contact_DAO() {
   return 'CRM_Activityical_DAO_ActivityicalContact';
 }

@@ -278,3 +278,21 @@ function _activityical_contact_has_feed_group($contact_id) {
   return TRUE;
 }
 
+/**
+ * Implements hook_civicrm_entityTypes.
+ *
+ * @param array $entityTypes
+ *   Registered entity types.
+ */
+function activityical_civicrm_entityTypes(&$entityTypes) {
+ $entityTypes['CRM_Activityical_DAO_ActivityicalContact'] = array(
+   'name' => 'ActivityicalContact',
+   'class' => 'CRM_Activityical_DAO_ActivityicalContact',
+   'table' => 'civicrm_activityicalcontact',
+ );
+ $entityTypes['CRM_Activityical_DAO_ActivityicalCache'] = array(
+   'name' => 'ActivityicalCache',
+   'class' => 'CRM_Activityical_DAO_ActivityicalCache',
+   'table' => 'civicrm_activityicalcache',
+ );
+}

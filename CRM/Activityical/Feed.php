@@ -14,13 +14,14 @@ class CRM_Activityical_Feed {
   }
 
   private function load() {
-    $dao = new CRM_Activityical_DAO_ActivityicalContact();
-    $dao->contact_id = $this->contact_id;
-    $dao->find();
-    $dao->fetch();
+    $params = array(
+      'contact_id' => $this->contact_id,
+      'sequential' => 1,
+    );
+    $result = civicrm_api3('activityical_contact', 'get', $params);
 
-    if (!empty($dao->hash)) {
-      $this->hash = $dao->hash;
+    if ($result['count'] && $hash = CRM_Utils_Array::value('hash', $result['values'][0])) {
+      $this->hash = $hash;
     }
     else {
       $this->generateHash();
@@ -43,28 +44,28 @@ class CRM_Activityical_Feed {
       CRM_Utils_System::permissionDenied();
     }
     $hash = md5(mt_rand(0, 10000000) . microtime());
-    // FIXME: use API here instead of DAO.
-    $dao = new CRM_Activityical_DAO_ActivityicalContact();
-    $dao->contact_id = $this->contact_id;
-    $dao->find();
-    $dao->fetch();
-    $dao->hash = $hash;
-    if ($dao->id) {
-      $dao->update();
-    }
-    else {
-      $dao->save();
-    }
-    $this->hash = $hash;
+
+    $params = array(
+      'contact_id' => $this->contact_id,
+    );
+    $result = civicrm_api3('activityical_contact', 'get', $params);
+    $id = $result['id'];
+ 
+    $params = array(
+      'id' => $id,
+      'contact_id' => $this->contact_id,
+      'hash' => $hash,
+    );
+    $result = civicrm_api3('activityical_contact', 'create', $params);
   }
 
   public function validateHash($hash) {
-    // FIXME: use API here instead of DAO.
-    $dao = new CRM_Activityical_DAO_ActivityicalContact();
-    $dao->contact_id = $this->contact_id;
-    $dao->hash = $hash;
-    $dao->find();
-    return (bool) $dao->N;
+    $params = array(
+      'contact_id' => $this->contact_id,
+      'hash' => $hash,
+    );
+    $result = civicrm_api3('activityical_contact', 'get', $params);
+    return (bool) $result['count'];
   }
 
   public function getUrl() {
