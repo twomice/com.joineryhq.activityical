@@ -1,7 +1,7 @@
 <?php
 
 class CRM_Activityical_Feed {
-  
+
   protected $contact_id;
 
   private $url;
@@ -50,7 +50,7 @@ class CRM_Activityical_Feed {
     );
     $result = civicrm_api3('activityical_contact', 'get', $params);
     $id = CRM_Utils_Array::value('id', $result);
- 
+
     $params = array(
       'id' => $id,
       'contact_id' => $this->contact_id,
@@ -79,6 +79,18 @@ class CRM_Activityical_Feed {
 
   public function getData() {
     $return = array();
+
+    // Retreive relevant extension settings.
+    $api_params = array(
+      'return' => array(
+        'activityical_description_append_targets',
+        'activityical_description_append_assignees',
+        'activityical_max_age_days',
+        'activityical_activity_type_ids',
+      ),
+    );
+    $result = civicrm_api3('setting', 'get', $api_params);
+    $settings = $result['values'][CRM_Core_Config::domainID()];
 
     // Set up placeholders for CiviCRM query. CiviCRM's query method doesn't
     // have anything like Drupals db_placeholders, so we do it ourselves here.
@@ -113,12 +125,25 @@ class CRM_Activityical_Feed {
 
     $i = $placeholder_count++;
     $placeholders['activityical_max_age_days'] = '%' . $i;
-    $result = civicrm_api3('setting', 'get', array('return' => array('activityical_max_age_days')));
     $params[$i] = array(
-      CRM_Utils_Array::value('activityical_max_age_days', $result['values'][CRM_Core_Config::domainID()], 0),
+      CRM_Utils_Array::value('activityical_max_age_days', $settings, 0),
       'Integer',
     );
-    
+
+    // Create a WHERE clause component for the 'activityical_activity_type_ids' setting.
+    if (!empty($settings['activityical_activity_type_ids']) && is_array($settings['activityical_activity_type_ids'])) {
+      $placeholders['activity_type_id'] = array();
+      foreach ($settings['activityical_activity_type_ids'] as $activity_type_id) {
+        $i = $placeholder_count++;
+        $placeholders['activity_type_id'][] = '%' . $i;
+        $params[$i] = array(
+          $activity_type_id,
+          'Integer',
+        );
+      }
+      $activtity_type_where = 'AND civicrm_activity.activity_type_id IN (' . implode(',', $placeholders['activity_type_id']) . ')';
+    }
+
     $query = "
       SELECT
         contact_primary.id as contact_id,
@@ -188,6 +213,7 @@ class CRM_Activityical_Feed {
         AND contact_primary.id = '{$placeholders['contact_id']}'
         AND civicrm_activity.is_test = 0
         AND civicrm_activity.activity_date_time > (CURRENT_DATE - INTERVAL {$placeholders['activityical_max_age_days']} DAY)
+        $activtity_type_where
       GROUP BY civicrm_activity.id
       ORDER BY activity_date_time desc
     ";
@@ -201,17 +227,10 @@ class CRM_Activityical_Feed {
         $description[] = preg_replace('/(\n|\r)/', '', $row['activity_details']);
       }
 
-      $settings = array('activityical_description_append_targets', 'activityical_description_append_assignees');
-      $result = civicrm_api3('setting', 'get', array('return' => $settings));
-      $domainID = CRM_Core_Config::domainID();
-      foreach ($settings as $setting) {
-        $$setting = CRM_Utils_Array::value($setting, $result['values'][$domainID]);
-      }
-
-      if ($activityical_description_append_targets && $row['targets']) {
+      if (!empty($settings['activityical_description_append_targets']) && $row['targets']) {
         $description[] = 'With: '. $row['targets'];
       }
-      if ($activityical_description_append_assignees && $row['other_assignees']) {
+      if (!empty($settings['activityical_description_append_assignees']) && $row['other_assignees']) {
         $description[] = 'Other assignees: '. $row['other_assignees'];
       }
       $row['description'] = implode("\n", $description);
@@ -259,5 +278,6 @@ class CRM_Activityical_Feed {
       'Unreachable',
       'Not Required',
     );
+    return $blocked_statuses;
   }
 }

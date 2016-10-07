@@ -154,15 +154,27 @@ class CRM_Activityical_Form_Settings extends CRM_Core_Form {
   }
 
   public static function getGroupOptions() {
-    $options = array(
-      0 => '- '. ts('none') . '-',
-    );
     $result = civicrm_api3('Group', 'get', array(
       'is_active' => 1,
     ));
     foreach ($result['values'] as $id => $value) {
       $options[$id] = $value['title'];
     }
+    asort($options);
+    $options = array(0 => '- '. ts('none') . ' -') + $options;
+    return $options;
+  }
+
+  public static function getActivityTypeOptions() {
+    $options = array();
+    $result = civicrm_api3('OptionValue', 'get', array(
+      'option_group_id' => "activity_type",
+      'is_active' => 1,
+    ));
+    foreach ($result['values'] as $id => $value) {
+      $options[$value['value']] = $value['label'];
+    }
+    asort($options);
     return $options;
   }
 
