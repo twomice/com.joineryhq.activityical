@@ -3,14 +3,23 @@
 class CRM_Activityical_Feed {
 
   protected $contact_id;
-
-  private $url;
-
+  private $query_params;
   private $hash;
+  private static $instances = array();
 
-  function  __construct($contact_id = NULL) {
-    $this->setContactId($contact_id);
+  protected function  __construct($contact_id, $query_params = NULL) {
+    $this->contact_id = $contact_id;
+    $this->setQueryParams($query_params);
     $this->load();
+  }
+
+  public static function getInstance($contact_id = NULL, $query_params = NULL) {
+    $contact_id = self::getContactId($contact_id);
+    if (empty(self::$instances[$contact_id])) {
+      $instance = new self($contact_id, $query_params);
+      self::$instances[$contact_id] = $instance;
+    }
+    return self::$instances[$contact_id];
   }
 
   private function load() {
@@ -28,12 +37,31 @@ class CRM_Activityical_Feed {
     }
   }
 
-  private function setContactId($contact_id = NULL) {
+  private function setQueryParams($query_params = NULL) {
+    // No need to do this more than once per instance.
+    if (!isset($this->query_params)) {
+      $supported_params = array(
+        'pdays' => 'integer',
+        'fdays' => 'integer',
+        'nocache' => 'integer',
+      );
+      if ($query_params === NULL) {
+        $params = array_intersect_key($_GET, $supported_params);
+        foreach ($params as $key => $value) {
+          $type = $supported_params[$key];
+          settype($value, $type);
+          $this->query_params[$key] = $value;
+        }
+      }
+    }
+  }
+
+  private static function getContactId($contact_id = NULL) {
     if (!empty($contact_id) && is_numeric($contact_id)) {
-      $this->contact_id = $contact_id;
+      return $contact_id;
     }
     else {
-      $this->contact_id = CRM_Core_Session::singleton()->getLoggedInContactID();
+      return CRM_Core_Session::singleton()->getLoggedInContactID();
     }
   }
 
@@ -85,7 +113,8 @@ class CRM_Activityical_Feed {
       'return' => array(
         'activityical_description_append_targets',
         'activityical_description_append_assignees',
-        'activityical_max_age_days',
+        'activityical_past_days',
+        'activityical_future_days',
         'activityical_activity_type_ids',
       ),
     );
@@ -123,10 +152,31 @@ class CRM_Activityical_Feed {
       'Integer',
     );
 
+    // Add limits for pdays/activityical_past_days
+    if (array_key_exists('pdays', $this->query_params)) {
+      $activityical_past_days = $this->query_params['pdays'];
+    }
+    else {
+      $activityical_past_days = CRM_Utils_Array::value('activityical_past_days', $settings, 0);
+    }
     $i = $placeholder_count++;
-    $placeholders['activityical_max_age_days'] = '%' . $i;
+    $placeholders['activityical_past_days'] = '%' . $i;
     $params[$i] = array(
-      CRM_Utils_Array::value('activityical_max_age_days', $settings, 0),
+      $activityical_past_days,
+      'Integer',
+    );
+
+    // Add limits for fdays/activityical_future_days
+    if (array_key_exists('fdays', $this->query_params)) {
+      $activityical_future_days = $this->query_params['fdays'];
+    }
+    else {
+      $activityical_future_days = CRM_Utils_Array::value('activityical_future_days', $settings, 0);
+    }
+    $i = $placeholder_count++;
+    $placeholders['activityical_future_days'] = '%' . $i;
+    $params[$i] = array(
+      $activityical_future_days,
       'Integer',
     );
 
@@ -212,7 +262,8 @@ class CRM_Activityical_Feed {
           (". implode(',', $placeholders['status']) . ")
         AND contact_primary.id = '{$placeholders['contact_id']}'
         AND civicrm_activity.is_test = 0
-        AND civicrm_activity.activity_date_time > (CURRENT_DATE - INTERVAL {$placeholders['activityical_max_age_days']} DAY)
+        AND date(civicrm_activity.activity_date_time) >= (CURRENT_DATE - INTERVAL {$placeholders['activityical_past_days']} DAY)
+        AND date(civicrm_activity.activity_date_time) <= (CURRENT_DATE + INTERVAL {$placeholders['activityical_future_days']} DAY)
         $activtity_type_where
       GROUP BY civicrm_activity.id
       ORDER BY activity_date_time desc
@@ -244,12 +295,35 @@ class CRM_Activityical_Feed {
   }
 
   public function getContents() {
-    // TODO: add caching.
-    $cache = new CRM_Activityical_Cache($this->contact_id);
-    if (empty($cache->retrieve())) {
-      $cache->store($this->getFeed());
+    if ($this->useCache()) {
+      $cache = new CRM_Activityical_Cache($this->contact_id);
+      if (empty($cache->retrieve())) {
+        $cache->store($this->getFeed());
+      }
+      return $cache->retrieve();
     }
-    return $cache->retrieve();
+    else {
+      return $this->getFeed();
+    }
+  }
+
+  private function useCache() {
+    $use_cache = TRUE;
+    $this->setQueryParams();
+    if (!empty($this->query_params['nocache']) && $this->query_params['nocache'] == 1) {
+      $use_cache = FALSE;
+    }
+    else {
+      // Check if we're configured to use caching.
+      $api_params = array(
+        'return' => array(
+          'activityical_cache_lifetime',
+        ),
+      );
+      $result = civicrm_api3('setting', 'get', $api_params);
+      $use_cache = (bool)CRM_Utils_Array::value('activityical_cache_lifetime', $result['values'][CRM_Core_Config::domainID()], 0);
+    }
+    return $use_cache;
   }
 
   public function getFeed() {

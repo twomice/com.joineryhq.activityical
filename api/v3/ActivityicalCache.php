@@ -46,12 +46,26 @@ function civicrm_api3_activityical_cache_get($params) {
 }
 
 /**
- * Get DAO name
+ * ActivityicalCache.clearall API
  *
  * @param array $params
  * @return array API result descriptor
  * @throws API_Exception
  */
-function _civicrm_api3_activityical_cache_DAO($params) {
+function civicrm_api3_activityical_cache_clearall($params) {
+  $dao_name = _civicrm_api3_activityical_cache_DAO();
+  $dao = new $dao_name();
+  $dao->whereAdd('1');
+  $result = $dao->delete(DB_DATAOBJECT_WHEREADD_ONLY);
+  if ($result === FALSE) {
+    throw new API_Exception('Could not delete all cache entries.');
+  }
+  return civicrm_api3_create_success($result, array(), 'activityical_cach', 'clearall');
+}
+
+/**
+ * Get DAO name
+ */
+function _civicrm_api3_activityical_cache_DAO() {
   return 'CRM_Activityical_DAO_ActivityicalCache';
 }

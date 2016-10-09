@@ -239,7 +239,7 @@ function activityical_civicrm_pageRun(&$page) {
       $tpl->assign('contact_id', $contact_id);
 
       // Get the feed URL for this contact.
-      $feed = new CRM_Activityical_Feed($contact_id);
+      $feed = CRM_Activityical_Feed::getInstance($contact_id);
       $tpl->assign('feed_url', $feed->getUrl());
 
       // Render the template.

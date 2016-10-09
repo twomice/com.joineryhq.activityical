@@ -2,7 +2,6 @@
 
 class CRM_Activityical_Cache {
 
-
   protected $contact_id;
   protected $cache = '';
   protected $loaded = FALSE;
@@ -17,6 +16,10 @@ class CRM_Activityical_Cache {
         'contact_id' => $this->contact_id,
         'sequential' => TRUE,
       );
+      // Never load expired data.
+      if ($min_cached_timestamp = self::getMinCacheTimestamp()) {
+        $params['cached'] = array('>=' => $min_cached_timestamp);
+      }
       $result = civicrm_api3('activityical_cache', 'get', $params);
       if ($result['count']) {
         $this->cache = CRM_Utils_Array::value('cache', $result['values'][0], '');
@@ -45,6 +48,10 @@ class CRM_Activityical_Cache {
     }
   }
 
+  static function clearAll() {
+    civicrm_api3('activityical_cache', 'clearall', array());
+  }
+
   function store($cache) {
     $params = array(
       'contact_id' => $this->contact_id,
@@ -59,5 +66,23 @@ class CRM_Activityical_Cache {
     civicrm_api3('activityical_cache', 'create', $params);
 
     $this->cache = $cache;
+  }
+
+  public static function getMinCacheTimestamp() {
+    // Get configured max cache lifetime (in minutes).
+    $api_params = array(
+      'return' => array(
+        'activityical_cache_lifetime',
+      ),
+    );
+    $result = civicrm_api3('setting', 'get', $api_params);
+    if ($cache_lifetime_minutes = CRM_Utils_Array::value('activityical_cache_lifetime', $result['values'][CRM_Core_Config::domainID()], 0)) {
+      $time = time();
+      $min_cache_time = $time - ($cache_lifetime_minutes * 60);
+      return date('Y-m-d H:i:s', $min_cache_time);
+    }
+    else {
+      return FALSE;
+    }
   }
 }

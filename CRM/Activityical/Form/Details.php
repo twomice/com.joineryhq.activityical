@@ -18,7 +18,7 @@ class CRM_Activityical_Form_Details extends CRM_Core_Form {
         CRM_Core_Error::statusBounce(ts('The given contact does not have an activities iCalendar feed.'));
       }
     }
-    $this->feed = new CRM_Activityical_Feed($this->contact_id);
+    $this->feed = CRM_Activityical_Feed::getInstance($this->contact_id);
   }
 
   public function buildQuickForm() {
@@ -75,7 +75,7 @@ class CRM_Activityical_Form_Details extends CRM_Core_Form {
   public function postProcess() {
     // This form really only does one thing if submitted, which is to rebuild
     // the feed URL.
-    $this->feed = new CRM_Activityical_Feed($this->_submitValues['contact_id']);
+    $this->feed = CRM_Activityical_Feed::getInstance($this->_submitValues['contact_id']);
     $this->feed->generateHash();
     CRM_Core_Session::setStatus(" ", ts('URL rebuilt'), "success");
     $extra = (!empty($this->_submitValues['contact_id']) ? "&contact_id={$this->_submitValues['contact_id']}" : '');

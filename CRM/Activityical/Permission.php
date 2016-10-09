@@ -62,7 +62,7 @@ class CRM_Activityical_Permission {
     }
 
     // Check $this->_params['key'] that it matches $this->_params['contact_id'].
-    $feed = new CRM_Activityical_Feed($contact_id);
+    $feed = CRM_Activityical_Feed::getInstance($contact_id);
     if (!$feed->validateHash($hash)) {
       return FALSE;
     }

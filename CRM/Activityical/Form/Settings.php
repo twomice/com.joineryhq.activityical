@@ -57,10 +57,12 @@ class CRM_Activityical_Form_Settings extends CRM_Core_Form {
       }
       $descriptions[$setting['name']] = ts($setting['description']);
 
-      if (!empty($setting['X_form_rule_args'])) {
-        $args = $setting['X_form_rule_args'];
-        array_unshift($args, $setting['name']);
-        call_user_func_array(array($this, 'addRule'), $args);
+      if (!empty($setting['X_form_rules_args'])) {
+        $rules_args = (array)$setting['X_form_rules_args'];
+        foreach ($rules_args as $rule_args) {
+          array_unshift($rule_args, $setting['name']);
+          call_user_func_array(array($this, 'addRule'), $rule_args);
+        }
       }
     }
     $this->assign("descriptions", $descriptions);
@@ -136,6 +138,9 @@ class CRM_Activityical_Form_Settings extends CRM_Core_Form {
 
     CRM_Core_Session::setStatus(" ", ts('Settings saved.'), "success");
 
+    // Clear cache, on the assumption that any change in this form will change
+    // the feed output.
+    CRM_Activityical_Cache::clearAll();
   }
 
   /**
@@ -145,12 +150,9 @@ class CRM_Activityical_Form_Settings extends CRM_Core_Form {
    */
   function setDefaultValues() {
     $result = civicrm_api3('setting', 'get', array('return' => array_keys($this->getFormSettings())));
-    $defaults = array();
     $domainID = CRM_Core_Config::domainID();
-    foreach ($result['values'][$domainID] as $name => $value) {
-      $defaults[$name] = $value;
-    }
-    return $defaults;
+    $ret = CRM_Utils_Array::value($domainID, $result['values']);
+    return $ret;
   }
 
   public static function getGroupOptions() {
@@ -182,13 +184,8 @@ class CRM_Activityical_Form_Settings extends CRM_Core_Form {
     if (!empty($setting['X_options_callback']) && is_callable($setting['X_options_callback'])) {
       return call_user_func($setting['X_options_callback']);
     }
-    elseif (strtolower($setting['type']) == 'boolean') {
-      return array(
-        1 => '',
-      );
-    }
     else {
-      return NULL;
+      return CRM_Utils_Array::value('X_options', $setting);
     }
   }
 }
