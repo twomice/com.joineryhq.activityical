@@ -85,6 +85,8 @@ class CRM_Activityical_Feed {
       'hash' => $hash,
     );
     $result = civicrm_api3('activityical_contact', 'create', $params);
+
+    $this->hash = $hash;
   }
 
   public function validateHash($hash) {
@@ -99,10 +101,17 @@ class CRM_Activityical_Feed {
   public function getUrl() {
     $url_query = array(
       'cid'=> $this->contact_id,
-      'key' => $this->hash,
+      'key' => $this->getHash(),
     );
     $url = CRM_Utils_System::url('civicrm/activityical/feed', $url_query, TRUE, NULL, FALSE, TRUE);
     return $url;
+  }
+
+  public function getHash() {
+    if (empty($this->hash)) {
+      $this->generateHash();
+    }
+    return $this->hash;
   }
 
   public function getData() {
@@ -153,7 +162,7 @@ class CRM_Activityical_Feed {
     );
 
     // Add limits for pdays/activityical_past_days
-    if (array_key_exists('pdays', $this->query_params)) {
+    if (is_array($this->query_params) && array_key_exists('pdays', $this->query_params)) {
       $activityical_past_days = $this->query_params['pdays'];
     }
     else {
@@ -167,7 +176,7 @@ class CRM_Activityical_Feed {
     );
 
     // Add limits for fdays/activityical_future_days
-    if (array_key_exists('fdays', $this->query_params)) {
+    if (is_array($this->query_params) && array_key_exists('fdays', $this->query_params)) {
       $activityical_future_days = $this->query_params['fdays'];
     }
     else {
@@ -192,6 +201,9 @@ class CRM_Activityical_Feed {
         );
       }
       $activtity_type_where = 'AND civicrm_activity.activity_type_id IN (' . implode(',', $placeholders['activity_type_id']) . ')';
+    }
+    else {
+      $activtity_type_where = '';
     }
 
     $query = "
