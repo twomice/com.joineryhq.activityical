@@ -11,12 +11,28 @@ require_once 'CRM/Core/Form.php';
  */
 class CRM_Activityical_Form_Settings extends CRM_Core_Form {
 
-  private $_settingFilter = array('group' => 'activityical');
+  static $settingFilter = array('group' => 'activityical');
   private $_submittedValues = array();
   private $_settings = array();
 
+  function __construct(
+    $state = NULL,
+    $action = CRM_Core_Action::NONE,
+    $method = 'post',
+    $name = NULL
+  ) {
+
+    $this->setSettings();
+
+    parent::__construct(
+      $state = NULL,
+      $action = CRM_Core_Action::NONE,
+      $method = 'post',
+      $name = NULL
+    );
+  }
   function buildQuickForm() {
-    $settings = $this->getFormSettings();
+    $settings = $this->_settings;
     foreach ($settings as $name => $setting) {
       if (isset($setting['quick_form_type'])) {
         switch($setting['html_type']) {
@@ -110,16 +126,19 @@ class CRM_Activityical_Form_Settings extends CRM_Core_Form {
   }
 
   /**
-   * Get the settings we are going to allow to be set on this form.
+   * Define the list of settings we are going to allow to be set on this form.
    *
    * @return array
    */
-  function getFormSettings() {
+  function setSettings() {
     if (empty($this->_settings)) {
-      $settings = civicrm_api3('setting', 'getfields', array('filters' => $this->_settingFilter));
+      $this->_settings = self::getSettings();
     }
-    $settings = $settings['values'];
-    return $settings;
+  }
+
+  static function getSettings() {
+    $settings =  civicrm_api3('setting', 'getfields', array('filters' => self::$settingFilter));
+    return $settings['values'];
   }
 
   /**
@@ -128,7 +147,7 @@ class CRM_Activityical_Form_Settings extends CRM_Core_Form {
    * @return array
    */
   function saveSettings() {
-    $settings = $this->getFormSettings();
+    $settings = $this->_settings;
     $values = array_intersect_key($this->_submittedValues, $settings);
     civicrm_api3('setting', 'create', $values);
 
@@ -149,10 +168,22 @@ class CRM_Activityical_Form_Settings extends CRM_Core_Form {
    * @see CRM_Core_Form::setDefaultValues()
    */
   function setDefaultValues() {
-    $result = civicrm_api3('setting', 'get', array('return' => array_keys($this->getFormSettings())));
+    $result = civicrm_api3('setting', 'get', array('return' => array_keys($this->_settings)));
     $domainID = CRM_Core_Config::domainID();
     $ret = CRM_Utils_Array::value($domainID, $result['values']);
     return $ret;
+
+    // Setting defaults are apparently not set in CiviCRM 
+    $settings_file = CRM_Core_Resources::singleton()->getPath('com.joineryhq.activityical', 'settings/Activityical.setting.php');
+    if ($settings_file) {
+      $settings = require_once($settings_file);
+      foreach ($settings as $k => $v) {
+        $default = CRM_Utils_Array::value('default', $v);
+        if ($default && !array_key_exists($k, $ret)) {
+          $ret[$k] = $default;
+        }
+      }
+    }
   }
 
   public static function getGroupOptions() {
