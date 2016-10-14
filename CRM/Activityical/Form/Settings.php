@@ -211,6 +211,19 @@ class CRM_Activityical_Form_Settings extends CRM_Core_Form {
     return $options;
   }
 
+  public static function getActivityStatusOptions() {
+    $options = array();
+    $result = civicrm_api3('OptionValue', 'get', array(
+      'option_group_id' => "activity_status",
+      'is_active' => 1,
+    ));
+    foreach ($result['values'] as $id => $value) {
+      $options[$value['value']] = $value['label'];
+    }
+    asort($options);
+    return $options;
+  }
+
   public function getSettingOptions($setting) {
     if (!empty($setting['X_options_callback']) && is_callable($setting['X_options_callback'])) {
       return call_user_func($setting['X_options_callback']);

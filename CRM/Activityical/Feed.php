@@ -125,6 +125,7 @@ class CRM_Activityical_Feed {
         'activityical_past_days',
         'activityical_future_days',
         'activityical_activity_type_ids',
+        'activityical_activity_status_ids',
       ),
     );
     $result = civicrm_api3('setting', 'get', $api_params);
@@ -190,6 +191,7 @@ class CRM_Activityical_Feed {
     );
 
     // Create a WHERE clause component for the 'activityical_activity_type_ids' setting.
+    $extra_wheres = array();
     if (!empty($settings['activityical_activity_type_ids']) && is_array($settings['activityical_activity_type_ids'])) {
       $placeholders['activity_type_id'] = array();
       foreach ($settings['activityical_activity_type_ids'] as $activity_type_id) {
@@ -200,11 +202,21 @@ class CRM_Activityical_Feed {
           'Integer',
         );
       }
-      $activtity_type_where = 'AND civicrm_activity.activity_type_id IN (' . implode(',', $placeholders['activity_type_id']) . ')';
+      $extra_wheres[] = 'AND civicrm_activity.activity_type_id IN (' . implode(',', $placeholders['activity_type_id']) . ')';
     }
-    else {
-      $activtity_type_where = '';
+    if (!empty($settings['activityical_activity_status_ids']) && is_array($settings['activityical_activity_status_ids'])) {
+      $placeholders['activity_status_id'] = array();
+      foreach ($settings['activityical_activity_status_ids'] as $activity_status_id) {
+        $i = $placeholder_count++;
+        $placeholders['activity_status_id'][] = '%' . $i;
+        $params[$i] = array(
+          $activity_status_id,
+          'Integer',
+        );
+      }
+      $extra_wheres[] = 'AND civicrm_activity.status_id IN (' . implode(',', $placeholders['activity_status_id']) . ')';
     }
+    $extra_where = implode("\n", $extra_wheres);
 
     $query = "
       SELECT
@@ -276,7 +288,7 @@ class CRM_Activityical_Feed {
         AND civicrm_activity.is_test = 0
         AND date(civicrm_activity.activity_date_time) >= (CURRENT_DATE - INTERVAL {$placeholders['activityical_past_days']} DAY)
         AND date(civicrm_activity.activity_date_time) <= (CURRENT_DATE + INTERVAL {$placeholders['activityical_future_days']} DAY)
-        $activtity_type_where
+        $extra_where
       GROUP BY civicrm_activity.id
       ORDER BY activity_date_time desc
     ";
