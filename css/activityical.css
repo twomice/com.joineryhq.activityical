@@ -1,9 +1,10 @@
 div.activityical-feed-url-display input{
-  width: 90%;
+  width: 60em;
+  max-width: 98%;
 }
 
 div#activityical-header-rebuild-url {
-  margin-top: 4em;
+  margin-top: 2em;
 }
 
 div#activityical-activity-links {
@@ -13,4 +14,12 @@ div#activityical-activity-links {
 
 select.activityical-settings-select {
   height: auto !important;
+}
+
+div.crm-accordion-body.activityical-accordion-body {
+  padding: .5em;
+}
+
+div.accordion {
+  margin-top: 1em;
 }

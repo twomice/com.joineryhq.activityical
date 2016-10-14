@@ -69,6 +69,9 @@ class CRM_Activityical_Form_Details extends CRM_Core_Form {
     CRM_Core_Resources::singleton()->addStyleFile('com.joineryhq.activityical', 'css/activityical.css');
     CRM_Core_Resources::singleton()->addScriptFile('com.joineryhq.activityical', 'js/activityical_feed_details.js');
 
+    // Assign advanced_options
+    $this->assign('advanced_options', $this->_getAdvancedOptions());
+
     parent::buildQuickForm();
   }
 
@@ -107,5 +110,24 @@ class CRM_Activityical_Form_Details extends CRM_Core_Form {
       }
     }
     return $elementNames;
+  }
+
+  private function _getAdvancedOptions() {
+    // Retreive relevant extension settings.
+    $api_params = array(
+      'return' => array(
+        'activityical_past_days',
+        'activityical_future_days',
+      ),
+    );
+    $result = civicrm_api3('setting', 'get', $api_params);
+    $settings = $result['values'][CRM_Core_Config::domainID()];
+
+    return array(
+      '&pdays=N' => ts('Limit the feed to activities within N days before the current date, instead of the default of %1 days.', array(1 => $settings['activityical_past_days'])),
+      '&fdays=N' => ts('Limit the feed to activities within N days after the current date, instead of the default of %1 days.', array(1 => $settings['activityical_future_days'])),
+      // TODO: add a config option to disable this parameter, and if so don't display it here.
+      '&nocache=1' => ts('Get the latest feed data, completely bypassing the feed cache.'),
+    );
   }
 }
