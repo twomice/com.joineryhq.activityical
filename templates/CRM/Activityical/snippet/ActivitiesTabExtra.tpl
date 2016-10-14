@@ -1,5 +1,5 @@
 <div id="activityical-activity-links">
-  iCalendar: 
+  {ts}iCalendar{/ts}:
   <a class="activityical-activity-link" href="{$feed_url}">{ts}Feed{/ts}</a>
   {if $access_details}
     |
