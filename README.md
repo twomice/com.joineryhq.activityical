@@ -51,7 +51,7 @@ Users with the "administer CiviCRM" permission can access the Feed Details page 
 ## FAQs
 1. __Why am I getting the error, "The given contact does not have an activities iCalendar feed." for some contacts?__
 Not all contacts will have a feed. See _Installation and Configuration: Activity iCalendar Feed Group_, above.
-2. __Why isn't my feed is not updating in Google Calendar?__
+2. __Why isn't my feed updating in Google Calendar?__
 In Google Calendar, the expected behavior is that linked iCalendar feeds may not not refreshed for several hours. The Google Calendar documentation at https://support.google.com/calendar/answer/37100?hl=en&ref_topic=1672445 says, "It might take up to 12 hours for changes to show in your Google Calendar." Unfortunately, even though the extension is doing its job and always providing a feed with the latest information, it's up to the feed consumer (in this case, Google Calendar) to decide what they want to do with that information and how often they want to refresh it. You can verify that the feed is working properly by acccessing the feed URL directly in your browser.
 
 
@@ -59,4 +59,4 @@ In Google Calendar, the expected behavior is that linked iCalendar feeds may not
 
 Please help me improve this extension by using the extension issue queue to report any troubles and to make requests for feature improvements. The issue queue is here: https://github.com/twomice/com.joineryhq.activityical/issues
 
-Issues submitted to the issue queue will be addressed as I have time. Please contact me at allen@joineryhq.com to request paid support.
+Issues submitted to the issue queue will be addressed as I have time and interest. Please contact me at allen@joineryhq.com to request paid support.
