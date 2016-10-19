@@ -229,7 +229,7 @@ class CRM_Activityical_Form_Settings extends CRM_Core_Form {
       return call_user_func($setting['X_options_callback']);
     }
     else {
-      return CRM_Utils_Array::value('X_options', $setting);
+      return CRM_Utils_Array::value('X_options', $setting, array());
     }
   }
 }
