@@ -5,11 +5,11 @@ require_once 'activityical.civix.php';
 
 /**
  * Custom permissions checking for this extension.
- * 
- * @param Array $access_arguments as defined in menu xml
- * @param String $op "or" if xml <access_arguments> is comma-delimited; "and" it
+ *
+ * @param array $access_arguments as defined in menu xml
+ * @param string $op "or" if xml <access_arguments> is comma-delimited; "and" it
  *   it is semicolon-delimited.
- * @return Boolean
+ * @return bool
  */
 function _activityical_check_permission($access_arguments, $op) {
   $checker = CRM_Activityical_Permission::singleton();
@@ -42,8 +42,6 @@ function activityical_civicrm_config(&$config) {
 
 /**
  * Implements hook_civicrm_xmlMenu().
- *
- * @param array $files
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_xmlMenu
  */
@@ -90,13 +88,6 @@ function activityical_civicrm_disable() {
 /**
  * Implements hook_civicrm_upgrade().
  *
- * @param $op string, the type of operation being performed; 'check' or 'enqueue'
- * @param $queue CRM_Queue_Queue, (for 'enqueue') the modifiable list of pending up upgrade tasks
- *
- * @return mixed
- *   Based on op. for 'check', returns array(boolean) (TRUE if upgrades are pending)
- *                for 'enqueue', returns void
- *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_upgrade
  */
 function activityical_civicrm_upgrade($op, CRM_Queue_Queue $queue = NULL) {
@@ -118,12 +109,6 @@ function activityical_civicrm_managed(&$entities) {
 /**
  * Implements hook_civicrm_caseTypes().
  *
- * Generate a list of case-types.
- *
- * @param array $caseTypes
- *
- * Note: This hook only runs in CiviCRM 4.4+.
- *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_caseTypes
  */
 function activityical_civicrm_caseTypes(&$caseTypes) {
@@ -133,15 +118,10 @@ function activityical_civicrm_caseTypes(&$caseTypes) {
 /**
  * Implements hook_civicrm_angularModules().
  *
- * Generate a list of Angular modules.
- *
- * Note: This hook only runs in CiviCRM 4.5+. It may
- * use features only available in v4.6+.
- *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_caseTypes
  */
 function activityical_civicrm_angularModules(&$angularModules) {
-_activityical_civix_civicrm_angularModules($angularModules);
+  _activityical_civix_civicrm_angularModules($angularModules);
 }
 
 /**
@@ -152,19 +132,6 @@ _activityical_civix_civicrm_angularModules($angularModules);
 function activityical_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
   _activityical_civix_civicrm_alterSettingsFolders($metaDataFolders);
 }
-
-/**
- * Functions below this ship commented out. Uncomment as required.
- *
-
-/**
- * Implements hook_civicrm_preProcess().
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_preProcess
- *
-function activityical_civicrm_preProcess($formName, &$form) {
-
-} // */
 
 /**
  * Implements hook_civicrm_navigationMenu().
@@ -181,7 +148,7 @@ function activityical_civicrm_navigationMenu(&$menu) {
     'separator' => NULL,
   ));
   _activityical_civix_navigationMenu($menu);
-} // */
+}
 
 
 /**
@@ -202,16 +169,16 @@ function activityical_civicrm_pageRun(&$page) {
       // Only if this CiviCRM is showing activities on the user dashboard
       if (isset($tpl->_tpl_vars['activity_rows']) || isset($tpl->_tpl_vars['activity_rowsEmpty'])) {
         $url_query = array(
-          'contact_id'=> $contact_id,
+          'contact_id' => $contact_id,
         );
         $feed_details_url = CRM_Utils_System::url('civicrm/activityical/details', $url_query, TRUE, NULL, FALSE);
-        CRM_Core_Session::setStatus(ts('Assigned activities are accessible as an iCalendar feed.') . ' '. '<a href="'. $feed_details_url . '">'. ts('Feed details...') . '</a>');
+        CRM_Core_Session::setStatus(ts('Assigned activities are accessible as an iCalendar feed.') . ' ' . '<a href="' . $feed_details_url . '">' . ts('Feed details...') . '</a>');
       }
     }
   }
 
   if (!empty($_GET['snippet']) && $_GET['snippet'] == 'json' && $page_name == 'CRM_Activity_Page_Tab') {
-    if(implode('/', $page->urlPath) == 'civicrm/contact/view/activity') {
+    if (implode('/', $page->urlPath) == 'civicrm/contact/view/activity') {
       // Do this only on the contact Activities tab.
 
       $contact_id = $page->_contactId;
@@ -233,7 +200,7 @@ function activityical_civicrm_pageRun(&$page) {
 
       // Get the feed details URL for this contact.
       $url_query = array(
-        'contact_id'=> $contact_id,
+        'contact_id' => $contact_id,
       );
       $feed_details_url = CRM_Utils_System::url('civicrm/activityical/details', $url_query, TRUE, NULL, FALSE);
       $tpl->assign('contact_id', $contact_id);
@@ -266,7 +233,7 @@ function _activityical_contact_has_feed_group($contact_id) {
     // No group defined; nobody can be in an undefined group.
     return FALSE;
   }
-  $api_params = array (
+  $api_params = array(
     'group_id' => $group_id,
     'contact_id' => $contact_id,
   );
@@ -279,23 +246,23 @@ function _activityical_contact_has_feed_group($contact_id) {
 }
 
 /**
- * Implements hook_civicrm_entityTypes.
+ * Implements hook_civicrm_entityTypes().
  */
 function activityical_civicrm_entityTypes(&$entityTypes) {
- $entityTypes['CRM_Activityical_DAO_ActivityicalContact'] = array(
-   'name' => 'ActivityicalContact',
-   'class' => 'CRM_Activityical_DAO_ActivityicalContact',
-   'table' => 'civicrm_activityicalcontact',
- );
- $entityTypes['CRM_Activityical_DAO_ActivityicalCache'] = array(
-   'name' => 'ActivityicalCache',
-   'class' => 'CRM_Activityical_DAO_ActivityicalCache',
-   'table' => 'civicrm_activityicalcache',
- );
+  $entityTypes['CRM_Activityical_DAO_ActivityicalContact'] = array(
+    'name' => 'ActivityicalContact',
+    'class' => 'CRM_Activityical_DAO_ActivityicalContact',
+    'table' => 'civicrm_activityicalcontact',
+  );
+  $entityTypes['CRM_Activityical_DAO_ActivityicalCache'] = array(
+    'name' => 'ActivityicalCache',
+    'class' => 'CRM_Activityical_DAO_ActivityicalCache',
+    'table' => 'civicrm_activityicalcache',
+  );
 }
 
 /**
- * Implements hook_civicrm_pre.
+ * Implements hook_civicrm_pre().
  */
 function activityical_civicrm_pre($op, $objectName, $objectId, &$params) {
   if ($objectName == 'Activity' && (
@@ -318,7 +285,7 @@ function activityical_civicrm_pre($op, $objectName, $objectId, &$params) {
       foreach (CRM_Utils_Array::value('assignee_contact_id', $params) as $contact_id) {
         $contact_ids[$contact_id] = 1;
       }
-      foreach(array_keys($contact_ids) as $contact_id) {
+      foreach (array_keys($contact_ids) as $contact_id) {
         $cache = new CRM_Activityical_Cache($contact_id);
         $cache->clear();
       }
@@ -327,7 +294,7 @@ function activityical_civicrm_pre($op, $objectName, $objectId, &$params) {
 }
 
 /**
- * Implements hook_civicrm_post.
+ * Implements hook_civicrm_post().
  */
 function activityical_civicrm_post($op, $objectName, $objectId, &$objectRef) {
   if ($objectName == 'Activity' && $op == 'create') {
