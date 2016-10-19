@@ -66,7 +66,7 @@ class CRM_Activityical_Form_Details extends CRM_Core_Form {
     $this->assign('elementNames', $this->getRenderableElementNames());
 
     // Add form resources.
-    CRM_Core_Resources::singleton()->addStyleFile('com.joineryhq.activityical', 'css/activityical.css');
+    CRM_Core_Resources::singleton()->addStyleFile('com.joineryhq.activityical', 'css/extension.css');
     CRM_Core_Resources::singleton()->addScriptFile('com.joineryhq.activityical', 'js/activityical_feed_details.js');
 
     // Assign advanced_options

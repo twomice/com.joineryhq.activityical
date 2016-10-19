@@ -219,7 +219,7 @@ function activityical_civicrm_pageRun(&$page) {
       $resource = CRM_Core_Resources::singleton();
       $resource->addVars('activityical', $vars);
       $resource->addScriptFile('com.joineryhq.activityical', 'js/actiivtyical_activities_tab.js');
-      $resource->addStyleFile('com.joineryhq.activityical', 'css/activityical.css');
+      $resource->addStyleFile('com.joineryhq.activityical', 'css/extension.css');
     }
   }
 }

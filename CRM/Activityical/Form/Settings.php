@@ -12,6 +12,7 @@ require_once 'CRM/Core/Form.php';
 class CRM_Activityical_Form_Settings extends CRM_Core_Form {
 
   static $settingFilter = array('group' => 'activityical');
+  static $extensionName = 'com.joineryhq.activityical';
   private $_submittedValues = array();
   private $_settings = array();
 
@@ -91,7 +92,7 @@ class CRM_Activityical_Form_Settings extends CRM_Core_Form {
       )
     ));
 
-    CRM_Core_Resources::singleton()->addStyleFile('com.joineryhq.activityical', 'css/activityical.css');
+    CRM_Core_Resources::singleton()->addStyleFile(self::$extensionName, 'css/extension.css');
 
     // export form elements
     $this->assign('elementNames', $this->getRenderableElementNames());
@@ -172,18 +173,6 @@ class CRM_Activityical_Form_Settings extends CRM_Core_Form {
     $domainID = CRM_Core_Config::domainID();
     $ret = CRM_Utils_Array::value($domainID, $result['values']);
     return $ret;
-
-    // Setting defaults are apparently not set in CiviCRM 
-    $settings_file = CRM_Core_Resources::singleton()->getPath('com.joineryhq.activityical', 'settings/Activityical.setting.php');
-    if ($settings_file) {
-      $settings = require_once($settings_file);
-      foreach ($settings as $k => $v) {
-        $default = CRM_Utils_Array::value('default', $v);
-        if ($default && !array_key_exists($k, $ret)) {
-          $ret[$k] = $default;
-        }
-      }
-    }
   }
 
   public static function getGroupOptions() {
