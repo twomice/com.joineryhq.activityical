@@ -321,7 +321,8 @@ class CRM_Activityical_Feed {
   public function getContents() {
     if ($this->useCache()) {
       $cache = new CRM_Activityical_Cache($this->contact_id);
-      if (empty($cache->retrieve())) {
+      $cache_value = $cache->retrieve();
+      if (empty($cache_value)) {
         $cache->store($this->getFeed());
       }
       return $cache->retrieve();
