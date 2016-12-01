@@ -92,7 +92,10 @@ class CRM_Activityical_Form_Settings extends CRM_Core_Form {
       )
     ));
 
-    CRM_Core_Resources::singleton()->addStyleFile(self::$extensionName, 'css/extension.css');
+    $style_path = CRM_Core_Resources::singleton()->getPath(self::$extensionName, 'css/extension.css');
+    if ($style_path) {
+      CRM_Core_Resources::singleton()->addStyleFile(self::$extensionName, 'css/extension.css');
+    }
 
     // export form elements
     $this->assign('elementNames', $this->getRenderableElementNames());
@@ -178,6 +181,7 @@ class CRM_Activityical_Form_Settings extends CRM_Core_Form {
   public static function getGroupOptions() {
     $result = civicrm_api3('Group', 'get', array(
       'is_active' => 1,
+      'options' => array('limit' => 0),
     ));
     foreach ($result['values'] as $id => $value) {
       $options[$id] = $value['title'];
@@ -192,6 +196,7 @@ class CRM_Activityical_Form_Settings extends CRM_Core_Form {
     $result = civicrm_api3('OptionValue', 'get', array(
       'option_group_id' => "activity_type",
       'is_active' => 1,
+      'options' => array('limit' => 0),
     ));
     foreach ($result['values'] as $id => $value) {
       $options[$value['value']] = $value['label'];
@@ -205,6 +210,7 @@ class CRM_Activityical_Form_Settings extends CRM_Core_Form {
     $result = civicrm_api3('OptionValue', 'get', array(
       'option_group_id' => "activity_status",
       'is_active' => 1,
+      'options' => array('limit' => 0),
     ));
     foreach ($result['values'] as $id => $value) {
       $options[$value['value']] = $value['label'];
