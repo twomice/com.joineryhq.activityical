@@ -139,6 +139,7 @@ function activityical_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_navigationMenu
  */
 function activityical_civicrm_navigationMenu(&$menu) {
+  _activityical_get_max_navID($menu, $max_navID);
   _activityical_civix_insert_navigation_menu($menu, 'Administer/System Settings', array(
     'label' => ts('Activity iCalendar Feed', array('domain' => 'com.joineryhq.activityical')),
     'name' => 'Activity iCalendar Feed',
@@ -146,6 +147,7 @@ function activityical_civicrm_navigationMenu(&$menu) {
     'permission' => 'administer CiviCRM',
     'operator' => 'AND',
     'separator' => NULL,
+    'navID' => ++$max_navID,
   ));
   _activityical_civix_navigationMenu($menu);
 }
@@ -308,6 +310,23 @@ function activityical_civicrm_post($op, $objectName, $objectId, &$objectRef) {
     foreach ($result['values'] as $value) {
       $cache = new CRM_Activityical_Cache($value['contact_id']);
       $cache->clear();
+    }
+  }
+}
+
+/**
+ * For an array of menu items, recursively get the value of the greatest navID
+ * attribute.
+ * @param <type> $menu
+ * @param <type> $max_navID
+ */
+function _activityical_get_max_navID(&$menu, &$max_navID = NULL) {
+  foreach ($menu as $id => $item) {
+    if (!empty($item['attributes']['navID'])) {
+      $max_navID = max($max_navID, $item['attributes']['navID']);
+    }
+    if (!empty($item['child'])) {
+      _activityical_get_max_navID($item['child'], $max_navID);
     }
   }
 }
