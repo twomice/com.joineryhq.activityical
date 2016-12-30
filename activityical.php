@@ -284,7 +284,7 @@ function activityical_civicrm_pre($op, $objectName, $objectId, &$params) {
       foreach ($result['values'] as $value) {
         $contact_ids[$value['contact_id']] = 1;
       }
-      foreach (CRM_Utils_Array::value('assignee_contact_id', $params) as $contact_id) {
+     foreach (CRM_Utils_Array::value('assignee_contact_id', $params, array()) as $contact_id) {
         $contact_ids[$contact_id] = 1;
       }
       foreach (array_keys($contact_ids) as $contact_id) {
