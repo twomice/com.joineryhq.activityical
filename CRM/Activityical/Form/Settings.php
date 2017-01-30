@@ -179,6 +179,7 @@ class CRM_Activityical_Form_Settings extends CRM_Core_Form {
   }
 
   public static function getGroupOptions() {
+    $options = array();
     $result = civicrm_api3('Group', 'get', array(
       'is_active' => 1,
       'options' => array('limit' => 0),
