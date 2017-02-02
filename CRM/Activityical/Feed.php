@@ -3,6 +3,7 @@
 class CRM_Activityical_Feed {
 
   protected $contact_id;
+  protected $timezone_string;
   private $query_params;
   private $hash;
   private static $instances = array();
@@ -352,12 +353,22 @@ class CRM_Activityical_Feed {
   }
 
   public function getFeed() {
+    $activities = $this->getData();
+    foreach ($activities as &$activity) {
+      // Define URL to activity.
+      $path = "civicrm/activity?action=view&context=activity&reset=1&cid={$activity['contact_id']}&id={$activity['id']}&atype={$activity['activity_type_id']}";
+      $activity['url'] = CRM_Utils_System::url($path, NULL, TRUE, NULL, FALSE, FALSE, TRUE);
+
+      // Adjust date/time for relevant timezone.
+      $activity['activity_date_time'] = $this->convertToUTC($activity['activity_date_time']);
+    }
+
     // Require a file from CiviCRM's dynamic include path.
     require_once 'CRM/Core/Smarty.php';
     $tpl = CRM_Core_Smarty::singleton();
-    $tpl->assign('activities', $this->getData());
+    $tpl->assign('activities', $activities);
 
-    // Assign base_url for to be used in links.
+    // Assign base_url to be used in links.
     global $base_url;
     $tpl->assign('base_url', $base_url);
 
@@ -378,5 +389,77 @@ class CRM_Activityical_Feed {
       'Not Required',
     );
     return $blocked_statuses;
+  }
+
+  public function getTimezoneString() {
+    if (empty($this->timezone_string)) {
+      $timezone_string = '';
+      $method_name = 'getTimezoneString_' . CIVICRM_UF;
+      if (method_exists(__CLASS__, $method_name)) {
+        $timezone_string = $this->$method_name();
+      }
+      $timezone_string = $timezone_string ?: 'UTC';
+      $this->timezone_string = $timezone_string;
+    }
+    return $this->timezone_string;
+  }
+
+  public function getTimezoneString_WordPress() {
+    $timezone_string = '';
+    if (function_exists('get_option')) {
+      $timezone_string = get_option('timezone_string');
+    }
+    return $timezone_string;
+  }
+
+  public function getTimezoneString_Drupal() {
+    $timezone_string = '';
+    // If timezones can be configurable per user, get the user's timezone setting.
+    if (variable_get('configurable_timezones', 1)) {
+      // Get the global user if no uid is given.
+      $result = civicrm_api3('UFMatch', 'get', array(
+        'sequential' => 1,
+        'contact_id' => $this->contact_id,
+      ));
+      if (!empty($result['values'])) {
+        $uid = $result['values'][0]['uf_id'];
+        $user = user_load($uid);
+        // Get the user's timezone setting, if any.
+        if ($user->uid && $user->timezone) {
+          $timezone_string = $user->timezone;
+        }
+      }
+    }
+    // If no timezone has been found yet, get the system timezone.
+    if (empty($timezone_string)) {
+      // Use @ operator to ignore PHP strict notice if time zone has not yet been
+      // set in the php.ini configuration.
+      $timezone_string = variable_get('date_default_timezone', @date_default_timezone_get());
+    }
+    return $timezone_string;
+  }
+
+  public function getTimezoneString_Joomla() {
+    $timezone_string = '';
+    $result = civicrm_api3('UFMatch', 'get', array(
+      'sequential' => 1,
+      'contact_id' => $this->contact_id,
+    ));
+    if (!empty($result['values'])) {
+      $uid = $result['values'][0]['uf_id'];
+      $user = JFactory::getUser($uid);
+      $timezone_string = $user->getParam('timezone', '');
+    }
+    if (empty($timezone_string)) {
+      $timezone_string = JFactory::getConfig()->get('offset');
+    }
+    return $timezone_string;
+  }
+
+  public function convertToUTC($datetime, $timezone_string = '') {
+    $timezone_string = $this->getTimezoneString();
+    $converted_time = new DateTime($datetime, new DateTimeZone($timezone_string) );
+    $converted_time->setTimeZone(new DateTimeZone('UTC'));
+    return $converted_time->format('Y-m-d H:i:s');
   }
 }

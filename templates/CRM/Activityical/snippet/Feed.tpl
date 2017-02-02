@@ -15,12 +15,12 @@ CATEGORIES:{$activity.activity_type|crmICalText}
 CALSCALE:GREGORIAN
 DTSTAMP;VALUE=DATE-TIME:{$smarty.now|date_format:'%Y-%m-%d %H:%M:%S'|crmICalDate}
 {if $activity.activity_date_time}
-DTSTART;VALUE=DATE-TIME:{$activity.activity_date_time|crmICalDate}
+DTSTART;VALUE=DATE-TIME:{$activity.activity_date_time|crmICalDate}Z
 {/if}
 {if $activity.activity_duration}
 DURATION:P{$activity.activity_duration}M
 {else}
-DTEND;VALUE=DATE-TIME:{$activity.activity_date_time|crmICalDate}
+DTEND;VALUE=DATE-TIME:{$activity.activity_date_time|crmICalDate}Z
 {/if}
 {if $activity.activity_location}
 LOCATION:{$activity.activity_location|crmICalText}
@@ -28,7 +28,7 @@ LOCATION:{$activity.activity_location|crmICalText}
 {if $activity.contact_email}
 ORGANIZER:MAILTO:{$activity.contact_email|crmICalText}
 {/if}
-URL:{$base_url}/civicrm/activity?action=view&context=activity&reset=1&cid={$activity.contact_id}&id={$activity.id}&atype={$activity.activity_type_id}
+URL:{$activity.url}
 CONTACT;ALTREP={$base_url}/civicrm/contact/view?reset=1&cid={$activity.source_id}:{$activity.source_display_name}
 END:VEVENT
 {/foreach}
