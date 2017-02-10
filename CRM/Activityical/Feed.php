@@ -377,6 +377,10 @@ class CRM_Activityical_Feed {
     $tpl->assign('domain', $domain);
 
     $output = $tpl->fetch('CRM/Activityical/snippet/Feed.tpl');
+    // Ensure CRLF line endings. I'm not willing to trust the line endings in
+    // Feed.tpl, so we specifically enforce CRLF here.
+    // Reference: http://icalendar.org/iCalendar-RFC-5545/3-1-content-lines.html
+    $output = preg_replace('/(\r\n|\n)/', "\r\n", $output);
     return $output;
   }
 
