@@ -18,7 +18,7 @@ DTSTAMP;VALUE=DATE-TIME:{$smarty.now|date_format:'%Y-%m-%d %H:%M:%S'|crmICalDate
 DTSTART;VALUE=DATE-TIME:{$activity.activity_date_time|crmICalDate}Z
 {/if}
 {if $activity.activity_duration}
-DURATION:P{$activity.activity_duration}M
+DURATION:PT{$activity.activity_duration}M
 {else}
 DTEND;VALUE=DATE-TIME:{$activity.activity_date_time|crmICalDate}Z
 {/if}
