@@ -377,10 +377,18 @@ class CRM_Activityical_Feed {
     $tpl->assign('domain', $domain);
 
     $output = $tpl->fetch('CRM/Activityical/snippet/Feed.tpl');
+
     // Ensure CRLF line endings. I'm not willing to trust the line endings in
     // Feed.tpl, so we specifically enforce CRLF here.
     // Reference: http://icalendar.org/iCalendar-RFC-5545/3-1-content-lines.html
     $output = preg_replace('/(\r\n|\n)/', "\r\n", $output);
+
+    // Fold any remaining long lines. (The smarty modifier crmICalText is used
+    // in Feed.tpl, and makes a noble effort, but isn't applied to everything,
+    // and is a bit of sledgehammer by wrapping at 50 characters).
+    // Reference: http://icalendar.org/iCalendar-RFC-5545/3-1-content-lines.html
+    $output = implode("\r\n ", str_split($output, 74));
+    
     return $output;
   }
 
