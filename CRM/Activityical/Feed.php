@@ -300,14 +300,16 @@ class CRM_Activityical_Feed {
 
       $description = array();
       if ($row['activity_details']) {
-        $description[] = preg_replace('/(\n|\r)/', '', $row['activity_details']);
+        $description[] = $row['activity_details'];
       }
 
       if (!empty($settings['activityical_description_append_targets']) && $row['targets']) {
-        $description[] = 'With: '. $row['targets'];
+        // Append "With", using HTML <p> (so that it gets a new line in X-ALT-DESC).
+        $description[] = '<p>With: '. $row['targets'] . '</p>';
       }
       if (!empty($settings['activityical_description_append_assignees']) && $row['other_assignees']) {
-        $description[] = 'Other assignees: '. $row['other_assignees'];
+        // Append "Assignignees", using HTML <p> (so that it gets a new line in X-ALT-DESC).
+        $description[] = '<p>Other assignees: '. $row['other_assignees'] . '</p>';
       }
       $row['description'] = implode("\n", $description);
 

@@ -37,6 +37,10 @@ function _activityical_check_permission($access_arguments, $op) {
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_config
  */
 function activityical_civicrm_config(&$config) {
+  $extRoot = dirname(__FILE__) . DIRECTORY_SEPARATOR;
+  $template =& CRM_Core_Smarty::singleton();
+  $template->plugins_dir = array_merge(array($extRoot .'Smarty'. DIRECTORY_SEPARATOR .'plugins'), (array)$template->plugins_dir);
+  
   _activityical_civix_civicrm_config($config);
 }
 
