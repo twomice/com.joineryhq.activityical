@@ -28,7 +28,7 @@ class CRM_Activityical_Feed {
       'contact_id' => $this->contact_id,
       'sequential' => 1,
     );
-    $result = civicrm_api3('activityical_contact', 'get', $params);
+    $result = _activityical_civicrmapi('activityical_contact', 'get', $params);
 
     if ($result['count'] && $hash = CRM_Utils_Array::value('hash', $result['values'][0])) {
       $this->hash = $hash;
@@ -77,7 +77,7 @@ class CRM_Activityical_Feed {
     $params = array(
       'contact_id' => $this->contact_id,
     );
-    $result = civicrm_api3('activityical_contact', 'get', $params);
+    $result = _activityical_civicrmapi('activityical_contact', 'get', $params);
     $id = CRM_Utils_Array::value('id', $result);
 
     $params = array(
@@ -85,7 +85,7 @@ class CRM_Activityical_Feed {
       'contact_id' => $this->contact_id,
       'hash' => $hash,
     );
-    $result = civicrm_api3('activityical_contact', 'create', $params);
+    $result = _activityical_civicrmapi('activityical_contact', 'create', $params);
 
     $this->hash = $hash;
   }
@@ -95,7 +95,7 @@ class CRM_Activityical_Feed {
       'contact_id' => $this->contact_id,
       'hash' => $hash,
     );
-    $result = civicrm_api3('activityical_contact', 'get', $params);
+    $result = _activityical_civicrmapi('activityical_contact', 'get', $params);
     return (bool) $result['count'];
   }
 
@@ -129,7 +129,7 @@ class CRM_Activityical_Feed {
         'activityical_activity_status_ids',
       ),
     );
-    $result = civicrm_api3('setting', 'get', $api_params);
+    $result = _activityical_civicrmapi('setting', 'get', $api_params);
     $settings = $result['values'][CRM_Core_Config::domainID()];
 
     // Set up placeholders for CiviCRM query. CiviCRM's query method doesn't
@@ -348,7 +348,7 @@ class CRM_Activityical_Feed {
           'activityical_cache_lifetime',
         ),
       );
-      $result = civicrm_api3('setting', 'get', $api_params);
+      $result = _activityical_civicrmapi('setting', 'get', $api_params);
       $use_cache = (bool)CRM_Utils_Array::value('activityical_cache_lifetime', $result['values'][CRM_Core_Config::domainID()], 0);
     }
     return $use_cache;
@@ -435,7 +435,7 @@ class CRM_Activityical_Feed {
     // If timezones can be configurable per user, get the user's timezone setting.
     if (variable_get('configurable_timezones', 1)) {
       // Get the global user if no uid is given.
-      $result = civicrm_api3('UFMatch', 'get', array(
+      $result = _activityical_civicrmapi('UFMatch', 'get', array(
         'sequential' => 1,
         'contact_id' => $this->contact_id,
       ));
@@ -459,7 +459,7 @@ class CRM_Activityical_Feed {
 
   public function getTimezoneString_Joomla() {
     $timezone_string = '';
-    $result = civicrm_api3('UFMatch', 'get', array(
+    $result = _activityical_civicrmapi('UFMatch', 'get', array(
       'sequential' => 1,
       'contact_id' => $this->contact_id,
     ));

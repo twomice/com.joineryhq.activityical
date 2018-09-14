@@ -32,7 +32,7 @@ class CRM_Activityical_Form_Details extends CRM_Core_Form {
         'id' => $this->contact_id,
       );
       try {
-        $result = civicrm_api3('contact', 'get', $api_params);
+        $result = _activityical_civicrmapi('contact', 'get', $api_params. FALSE);
       }
       catch (CiviCRM_API3_Exception $e) {
           CRM_Core_Error::statusBounce($not_found_error);
@@ -120,7 +120,7 @@ class CRM_Activityical_Form_Details extends CRM_Core_Form {
         'activityical_future_days',
       ),
     );
-    $result = civicrm_api3('setting', 'get', $api_params);
+    $result = _activityical_civicrmapi('setting', 'get', $api_params);
     $settings = $result['values'][CRM_Core_Config::domainID()];
 
     return array(

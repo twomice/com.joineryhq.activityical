@@ -232,7 +232,7 @@ function activityical_civicrm_pageRun(&$page) {
 
 function _activityical_contact_has_feed_group($contact_id) {
   // Check $this->_params['contact_id'] that they have the right civicrm group.
-  $result = civicrm_api3('setting', 'get', array('return' => 'activityical_group_id'));
+  $result = _activityical_civicrmapi('setting', 'get', array('return' => 'activityical_group_id'));
   $domainID = CRM_Core_Config::domainID();
   $group_id = $result['values'][$domainID]['activityical_group_id'];
   if (empty($group_id)) {
@@ -243,7 +243,7 @@ function _activityical_contact_has_feed_group($contact_id) {
     'group_id' => $group_id,
     'contact_id' => $contact_id,
   );
-  $result = civicrm_api3('group_contact', 'get', $api_params);
+  $result = _activityical_civicrmapi('group_contact', 'get', $api_params);
   if (!$result['count']) {
     return FALSE;
   }
@@ -284,7 +284,7 @@ function activityical_civicrm_pre($op, $objectName, $objectId, &$params) {
         'activity_id' => $id,
         'record_type_id' => 1,
       );
-      $result = civicrm_api3('activity_contact', 'get', $api_params);
+      $result = _activityical_civicrmapi('activity_contact', 'get', $api_params);
       foreach ($result['values'] as $value) {
         $contact_ids[$value['contact_id']] = 1;
       }
@@ -310,7 +310,7 @@ function activityical_civicrm_post($op, $objectName, $objectId, &$objectRef) {
       'activity_id' => $objectId,
       'record_type_id' => 1,
     );
-    $result = civicrm_api3('activity_contact', 'get', $api_params);
+    $result = _activityical_civicrmapi('activity_contact', 'get', $api_params);
     foreach ($result['values'] as $value) {
       $cache = new CRM_Activityical_Cache($value['contact_id']);
       $cache->clear();
@@ -333,4 +333,33 @@ function _activityical_get_max_navID(&$menu, &$max_navID = NULL) {
       _activityical_get_max_navID($item['child'], $max_navID);
     }
   }
+}
+
+/**
+ * Log CiviCRM API errors to CiviCRM log.
+ */
+function _activityical_log_api_error(CiviCRM_API3_Exception $e, $entity, $action, $params) {
+  $message = "CiviCRM API Error '{$entity}.{$action}': ". $e->getMessage() .'; ';
+  $message .= "API parameters when this error happened: ". json_encode($params) .'; ';
+  $bt = debug_backtrace();
+  $error_location = "{$bt[1]['file']}::{$bt[1]['line']}";
+  $message .= "Error API called from: $error_location";
+  CRM_Core_Error::debug_log_message($message);
+}
+
+/**
+ * CiviCRM API wrapper. Wraps with try/catch, redirects errors to log, saves
+ * typing.
+ */
+function _activityical_civicrmapi($entity, $action, $params, $silence_errors = TRUE) {
+  try {
+    $result = civicrm_api3($entity, $action, $params);
+  } catch (CiviCRM_API3_Exception $e) {
+    _activityical_log_api_error($e, $entity, $action, $params);
+    if (!$silence_errors) {
+      throw $e;
+    }
+  }
+
+  return $result;
 }

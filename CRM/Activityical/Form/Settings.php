@@ -141,7 +141,7 @@ class CRM_Activityical_Form_Settings extends CRM_Core_Form {
   }
 
   static function getSettings() {
-    $settings =  civicrm_api3('setting', 'getfields', array('filters' => self::$settingFilter));
+    $settings =  _activityical_civicrmapi('setting', 'getfields', array('filters' => self::$settingFilter));
     return $settings['values'];
   }
 
@@ -153,11 +153,11 @@ class CRM_Activityical_Form_Settings extends CRM_Core_Form {
   function saveSettings() {
     $settings = $this->_settings;
     $values = array_intersect_key($this->_submittedValues, $settings);
-    civicrm_api3('setting', 'create', $values);
+    _activityical_civicrmapi('setting', 'create', $values);
 
     // Save any that are not submitted, as well (e.g., checkboxes that aren't checked).
     $unsettings = array_fill_keys(array_keys(array_diff_key($settings, $this->_submittedValues)), NULL);
-    civicrm_api3('setting', 'create', $unsettings);
+    _activityical_civicrmapi('setting', 'create', $unsettings);
 
     CRM_Core_Session::setStatus(" ", ts('Settings saved.'), "success");
 
@@ -172,7 +172,7 @@ class CRM_Activityical_Form_Settings extends CRM_Core_Form {
    * @see CRM_Core_Form::setDefaultValues()
    */
   function setDefaultValues() {
-    $result = civicrm_api3('setting', 'get', array('return' => array_keys($this->_settings)));
+    $result = _activityical_civicrmapi('setting', 'get', array('return' => array_keys($this->_settings)));
     $domainID = CRM_Core_Config::domainID();
     $ret = CRM_Utils_Array::value($domainID, $result['values']);
     return $ret;
@@ -180,7 +180,7 @@ class CRM_Activityical_Form_Settings extends CRM_Core_Form {
 
   public static function getGroupOptions() {
     $options = array();
-    $result = civicrm_api3('Group', 'get', array(
+    $result = _activityical_civicrmapi('Group', 'get', array(
       'is_active' => 1,
       'options' => array('limit' => 0),
     ));
@@ -194,7 +194,7 @@ class CRM_Activityical_Form_Settings extends CRM_Core_Form {
 
   public static function getActivityTypeOptions() {
     $options = array();
-    $result = civicrm_api3('OptionValue', 'get', array(
+    $result = _activityical_civicrmapi('OptionValue', 'get', array(
       'option_group_id' => "activity_type",
       'is_active' => 1,
       'options' => array('limit' => 0),
@@ -208,7 +208,7 @@ class CRM_Activityical_Form_Settings extends CRM_Core_Form {
 
   public static function getActivityStatusOptions() {
     $options = array();
-    $result = civicrm_api3('OptionValue', 'get', array(
+    $result = _activityical_civicrmapi('OptionValue', 'get', array(
       'option_group_id' => "activity_status",
       'is_active' => 1,
       'options' => array('limit' => 0),
