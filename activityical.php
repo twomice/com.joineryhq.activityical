@@ -338,7 +338,7 @@ function _activityical_get_max_navID(&$menu, &$max_navID = NULL) {
 /**
  * Log CiviCRM API errors to CiviCRM log.
  */
-function _activityical_log_api_error(CiviCRM_API3_Exception $e, $entity, $action, $params) {
+function _activityical_log_api_error(CiviCRM_API3_Exception $e, string $entity, string $action, array $params) {
   $message = "CiviCRM API Error '{$entity}.{$action}': ". $e->getMessage() .'; ';
   $message .= "API parameters when this error happened: ". json_encode($params) .'; ';
   $bt = debug_backtrace();
@@ -351,7 +351,7 @@ function _activityical_log_api_error(CiviCRM_API3_Exception $e, $entity, $action
  * CiviCRM API wrapper. Wraps with try/catch, redirects errors to log, saves
  * typing.
  */
-function _activityical_civicrmapi($entity, $action, $params, $silence_errors = TRUE) {
+function _activityical_civicrmapi(string $entity, string $action, array $params, bool $silence_errors = TRUE) {
   try {
     $result = civicrm_api3($entity, $action, $params);
   } catch (CiviCRM_API3_Exception $e) {
