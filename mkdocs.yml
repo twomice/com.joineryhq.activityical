@@ -1,13 +1,16 @@
 site_name: Activity iCalendar Feed
 repo_url: https://github.com/twomice/com.joineryhq.activityical 
 site_description: A CiviCRM extension to provide an iCalendar feed of assigned activities per contact 
-theme: material
+theme: 
+  name: material
 markdown_extensions:
   - attr_list
   - admonition
   - def_list
-  - codehilite(guess_lang=false)
-  - toc(permalink=true)
+  - codehilite:
+      guess_lang: false
+  - toc:
+     permalink: true
   - pymdownx.superfences
   - pymdownx.inlinehilite
   - pymdownx.tilde
