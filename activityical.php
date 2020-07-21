@@ -40,7 +40,7 @@ function activityical_civicrm_config(&$config) {
   $extRoot = dirname(__FILE__) . DIRECTORY_SEPARATOR;
   $template =& CRM_Core_Smarty::singleton();
   $template->plugins_dir = array_merge(array($extRoot .'Smarty'. DIRECTORY_SEPARATOR .'plugins'), (array)$template->plugins_dir);
-  
+
   _activityical_civix_civicrm_config($config);
 }
 
@@ -362,4 +362,45 @@ function _activityical_civicrmapi(string $entity, string $action, array $params,
   }
 
   return $result;
+}
+
+/**
+ * Implements hook_civicrm_tokens().
+ */
+function activityical_civicrm_tokens(&$tokens) {
+  $contact_id = CRM_Utils_Array::value('contact_id', $_GET, CRM_Core_Session::singleton()->getLoggedInContactID());
+
+  if(_activityical_contact_has_feed_group($contact_id)) {
+    $tokens['feed'] = [
+      'feed.activityical' => 'Activityical Feed URL',
+    ];
+  }
+}
+
+/**
+ * Implements hook_civicrm__tokenValues().
+ */
+function activityical_civicrm_tokenValues(&$values, $cids, $job = null, $tokens = [], $context = null) {
+  /* Make sure to get the contact_id and feed of the sender */
+  $contact_id = CRM_Utils_Array::value('contact_id', $_GET, CRM_Core_Session::singleton()->getLoggedInContactID());
+  $feed_link = CRM_Activityical_Feed::getInstance($contact_id);
+
+  $group = 'feed';
+  if(isset($tokens[$group])) {
+    $token = 'activityical';
+    if (!activityical_isTokenRequested($tokens, $group, $token)) {
+      return;
+    }
+
+    foreach ($cids as $cid) {
+      $values[$cid]['feed.activityical'] = $feed_link->getUrl();
+    }
+  }
+}
+
+function activityical_isTokenRequested($tokens, $group, $token) {
+  if (array_key_exists($token, $tokens[$group]) || in_array($token, $tokens[$group])) {
+    return TRUE;
+  }
+  return FALSE;
 }
