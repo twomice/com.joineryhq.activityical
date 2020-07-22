@@ -40,7 +40,7 @@ function activityical_civicrm_config(&$config) {
   $extRoot = dirname(__FILE__) . DIRECTORY_SEPARATOR;
   $template =& CRM_Core_Smarty::singleton();
   $template->plugins_dir = array_merge(array($extRoot .'Smarty'. DIRECTORY_SEPARATOR .'plugins'), (array)$template->plugins_dir);
-  
+
   _activityical_civix_civicrm_config($config);
 }
 
@@ -362,4 +362,29 @@ function _activityical_civicrmapi(string $entity, string $action, array $params,
   }
 
   return $result;
+}
+
+/**
+ * Implements hook_civicrm_tokens().
+ */
+function activityical_civicrm_tokens(&$tokens) {
+  $tokens['activityical'] = [
+    'activityical.url' => 'Activityical Feed URL',
+  ];
+}
+
+/**
+ * Implements hook_civicrm__tokenValues().
+ */
+function activityical_civicrm_tokenValues(&$values, $cids, $job = null, $tokens = [], $context = null) {
+  if(isset($tokens['activityical'])) {
+    if (!(array_key_exists('url', $tokens['activityical']) || in_array('url', $tokens['activityical']))) {
+      return;
+    }
+
+    foreach ($cids as $cid) {
+      $feed_link = CRM_Activityical_Feed::getInstance($cid);
+      $values[$cid]['activityical.url'] = $feed_link->getUrl();
+    }
+  }
 }
