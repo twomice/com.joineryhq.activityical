@@ -19,7 +19,7 @@
  */
 function smarty_modifier_activityicalHtml($str) {
   $ret = $str;
-  
+
   $ret = str_replace('\\', '\\\\', $ret);
   $ret = str_replace(',', '\,', $ret);
   $ret = str_replace(';', '\;', $ret);

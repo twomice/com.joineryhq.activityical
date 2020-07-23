@@ -10,7 +10,7 @@ class CRM_Activityical_Upgrader_Base {
   /**
    * @var varies, subclass of ttis
    */
-  static $instance;
+  public static $instance;
 
   /**
    * @var CRM_Queue_TaskContext
@@ -35,12 +35,12 @@ class CRM_Activityical_Upgrader_Base {
   /**
    * Obtain a reference to the active upgrade handler.
    */
-  static public function instance() {
-    if (! self::$instance) {
+  public static function instance() {
+    if (!self::$instance) {
       // FIXME auto-generate
       self::$instance = new CRM_Activityical_Upgrader(
         'com.joineryhq.activityical',
-        realpath(__DIR__ .'/../../../')
+        realpath(__DIR__ . '/../../../')
       );
     }
     return self::$instance;
@@ -56,7 +56,7 @@ class CRM_Activityical_Upgrader_Base {
    * CRM_Activityical_Upgrader_Base::_queueAdapter($ctx, 'methodName', 'arg1', 'arg2');
    * @endcode
    */
-  static public function _queueAdapter() {
+  public static function _queueAdapter() {
     $instance = self::instance();
     $args = func_get_args();
     $instance->ctx = array_shift($args);
@@ -205,7 +205,7 @@ class CRM_Activityical_Upgrader_Base {
    * @return array(revisionNumbers) sorted numerically
    */
   public function getRevisions() {
-    if (! is_array($this->revisions)) {
+    if (!is_array($this->revisions)) {
       $this->revisions = array();
 
       $clazz = new ReflectionClass(get_class($this));
@@ -238,8 +238,9 @@ class CRM_Activityical_Upgrader_Base {
     return TRUE;
   }
 
-  // ******** Hook delegates ********
-
+  /**
+   * Hook delegates
+   */
   public function onInstall() {
     $files = glob($this->extensionDir . '/sql/*_install.sql');
     if (is_array($files)) {
@@ -300,4 +301,5 @@ class CRM_Activityical_Upgrader_Base {
       default:
     }
   }
+
 }

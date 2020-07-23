@@ -2,7 +2,6 @@
 
 require_once 'activityical.civix.php';
 
-
 /**
  * Custom permissions checking for this extension.
  *
@@ -39,8 +38,8 @@ function _activityical_check_permission($access_arguments, $op) {
 function activityical_civicrm_config(&$config) {
   $extRoot = dirname(__FILE__) . DIRECTORY_SEPARATOR;
   $template =& CRM_Core_Smarty::singleton();
-  $template->plugins_dir = array_merge(array($extRoot .'Smarty'. DIRECTORY_SEPARATOR .'plugins'), (array)$template->plugins_dir);
-  
+  $template->plugins_dir = array_merge(array($extRoot . 'Smarty' . DIRECTORY_SEPARATOR . 'plugins'), (array) $template->plugins_dir);
+
   _activityical_civix_civicrm_config($config);
 }
 
@@ -155,7 +154,6 @@ function activityical_civicrm_navigationMenu(&$menu) {
   ));
   _activityical_civix_navigationMenu($menu);
 }
-
 
 /**
  * Implements hook_civicrm_pageRun().
@@ -288,7 +286,7 @@ function activityical_civicrm_pre($op, $objectName, $objectId, &$params) {
       foreach ($result['values'] as $value) {
         $contact_ids[$value['contact_id']] = 1;
       }
-     foreach (CRM_Utils_Array::value('assignee_contact_id', $params, array()) as $contact_id) {
+      foreach (CRM_Utils_Array::value('assignee_contact_id', $params, array()) as $contact_id) {
         $contact_ids[$contact_id] = 1;
       }
       foreach (array_keys($contact_ids) as $contact_id) {
@@ -339,8 +337,8 @@ function _activityical_get_max_navID(&$menu, &$max_navID = NULL) {
  * Log CiviCRM API errors to CiviCRM log.
  */
 function _activityical_log_api_error(CiviCRM_API3_Exception $e, string $entity, string $action, array $params) {
-  $message = "CiviCRM API Error '{$entity}.{$action}': ". $e->getMessage() .'; ';
-  $message .= "API parameters when this error happened: ". json_encode($params) .'; ';
+  $message = "CiviCRM API Error '{$entity}.{$action}': " . $e->getMessage() . '; ';
+  $message .= "API parameters when this error happened: " . json_encode($params) . '; ';
   $bt = debug_backtrace();
   $error_location = "{$bt[1]['file']}::{$bt[1]['line']}";
   $message .= "Error API called from: $error_location";
@@ -354,7 +352,8 @@ function _activityical_log_api_error(CiviCRM_API3_Exception $e, string $entity, 
 function _activityical_civicrmapi(string $entity, string $action, array $params, bool $silence_errors = TRUE) {
   try {
     $result = civicrm_api3($entity, $action, $params);
-  } catch (CiviCRM_API3_Exception $e) {
+  }
+  catch (CiviCRM_API3_Exception $e) {
     _activityical_log_api_error($e, $entity, $action, $params);
     if (!$silence_errors) {
       throw $e;

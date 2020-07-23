@@ -1,9 +1,8 @@
 <?php
-/* 
+/**
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 class CRM_Activityical_Permission {
 
   /**
@@ -16,10 +15,9 @@ class CRM_Activityical_Permission {
 
   /**
    * Parameters for permissioning, defaults to $_GET
-   * @var Array
+   * @var params
    */
   private $_params;
-
 
   /**
    * The constructor. Use self::singleton() to create an instance.
@@ -29,11 +27,6 @@ class CRM_Activityical_Permission {
 
   /**
    * Singleton function used to manage this object.
-   *
-   * @param bool $loadFromDB
-   *   whether to load from the database.
-   * @param bool $force
-   *   whether to force a reconstruction.
    *
    * @return CRM_Core_Config
    */
@@ -57,7 +50,7 @@ class CRM_Activityical_Permission {
       return FALSE;
     }
 
-    if (!_activityical_contact_has_feed_group($contact_id)){
+    if (!_activityical_contact_has_feed_group($contact_id)) {
       return FALSE;
     }
 
@@ -79,4 +72,5 @@ class CRM_Activityical_Permission {
       || CRM_Core_Permission::check('administer CiviCRM')
     );
   }
+
 }

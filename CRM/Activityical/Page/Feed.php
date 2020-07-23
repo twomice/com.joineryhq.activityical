@@ -3,6 +3,7 @@
 require_once 'CRM/Core/Page.php';
 
 class CRM_Activityical_Page_Feed extends CRM_Core_Page {
+
   public function run() {
     $contact_id = CRM_Utils_Array::value('cid', $_GET);
     $feed = CRM_Activityical_Feed::getInstance($contact_id);
@@ -15,4 +16,5 @@ class CRM_Activityical_Page_Feed extends CRM_Core_Page {
     CRM_Utils_ICalendar::send($output, 'text/calendar', NULL, 'civicrm_activities.ical', 'attachment');
     exit;
   }
+
 }

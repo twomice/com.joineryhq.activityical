@@ -101,7 +101,7 @@ class CRM_Activityical_Feed {
 
   public function getUrl() {
     $url_query = array(
-      'cid'=> $this->contact_id,
+      'cid' => $this->contact_id,
       'key' => $this->getHash(),
     );
     $url = CRM_Utils_System::url('civicrm/activityical/feed', $url_query, TRUE, NULL, FALSE, TRUE);
@@ -284,7 +284,7 @@ class CRM_Activityical_Feed {
         LEFT JOIN civicrm_contact target ON activity_target.contact_id = target.id
       WHERE
         civicrm_activity.status_id NOT IN
-          (". implode(',', $placeholders['status']) . ")
+          (" . implode(',', $placeholders['status']) . ")
         AND contact_primary.id = '{$placeholders['contact_id']}'
         AND civicrm_activity.is_test = 0
         AND date(civicrm_activity.activity_date_time) >= (CURRENT_DATE - INTERVAL {$placeholders['activityical_past_days']} DAY)
@@ -305,11 +305,11 @@ class CRM_Activityical_Feed {
 
       if (!empty($settings['activityical_description_append_targets']) && $row['targets']) {
         // Append "With", using HTML <p> (so that it gets a new line in X-ALT-DESC).
-        $description[] = '<p>With: '. $row['targets'] . '</p>';
+        $description[] = '<p>With: ' . $row['targets'] . '</p>';
       }
       if (!empty($settings['activityical_description_append_assignees']) && $row['other_assignees']) {
         // Append "Assignignees", using HTML <p> (so that it gets a new line in X-ALT-DESC).
-        $description[] = '<p>Other assignees: '. $row['other_assignees'] . '</p>';
+        $description[] = '<p>Other assignees: ' . $row['other_assignees'] . '</p>';
       }
       $row['description'] = implode("\n", $description);
 
@@ -349,7 +349,7 @@ class CRM_Activityical_Feed {
         ),
       );
       $result = _activityical_civicrmapi('setting', 'get', $api_params);
-      $use_cache = (bool)CRM_Utils_Array::value('activityical_cache_lifetime', $result['values'][CRM_Core_Config::domainID()], 0);
+      $use_cache = (bool) CRM_Utils_Array::value('activityical_cache_lifetime', $result['values'][CRM_Core_Config::domainID()], 0);
     }
     return $use_cache;
   }
@@ -375,7 +375,7 @@ class CRM_Activityical_Feed {
     $tpl->assign('base_url', $base_url);
 
     // Calculate and assign the domain for activity uids
-    $domain = parse_url('http://'. $_SERVER['HTTP_HOST'], PHP_URL_HOST);
+    $domain = parse_url('http://' . $_SERVER['HTTP_HOST'], PHP_URL_HOST);
     $tpl->assign('domain', $domain);
 
     $output = $tpl->fetch('CRM/Activityical/snippet/Feed.tpl');
@@ -476,8 +476,9 @@ class CRM_Activityical_Feed {
 
   public function convertToUTC($datetime, $timezone_string = '') {
     $timezone_string = $this->getTimezoneString();
-    $converted_time = new DateTime($datetime, new DateTimeZone($timezone_string) );
+    $converted_time = new DateTime($datetime, new DateTimeZone($timezone_string));
     $converted_time->setTimeZone(new DateTimeZone('UTC'));
     return $converted_time->format('Y-m-d H:i:s');
   }
+
 }
