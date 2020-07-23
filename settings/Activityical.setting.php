@@ -73,6 +73,7 @@ return array(
     'help_text' => '',
     'html_type' => '',
     'quick_form_type' => 'YesNo',
+    'default' => 1,
   ),
   'activityical_description_append_assignees' => array(
     'group_name' => 'Activityical Settings',
@@ -87,6 +88,7 @@ return array(
     'help_text' => '',
     'html_type' => '',
     'quick_form_type' => 'YesNo',
+    'default' => 1,
   ),
   'activityical_cache_lifetime' => array(
     'group_name' => 'Activityical Settings',

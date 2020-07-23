@@ -362,3 +362,28 @@ function _activityical_civicrmapi(string $entity, string $action, array $params,
 
   return $result;
 }
+
+/**
+ * Implements hook_civicrm_tokens().
+ */
+function activityical_civicrm_tokens(&$tokens) {
+  $tokens['activityical'] = [
+    'activityical.url' => 'Activityical Feed URL',
+  ];
+}
+
+/**
+ * Implements hook_civicrm__tokenValues().
+ */
+function activityical_civicrm_tokenValues(&$values, $cids, $job = NULL, $tokens = [], $context = NULL) {
+  if (isset($tokens['activityical'])) {
+    if (!(array_key_exists('url', $tokens['activityical']) || in_array('url', $tokens['activityical']))) {
+      return;
+    }
+
+    foreach ($cids as $cid) {
+      $feed_link = CRM_Activityical_Feed::getInstance($cid);
+      $values[$cid]['activityical.url'] = $feed_link->getUrl();
+    }
+  }
+}
