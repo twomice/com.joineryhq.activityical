@@ -6,7 +6,7 @@ class CRM_Activityical_Cache {
   protected $cache = '';
   protected $loaded = FALSE;
 
-  function  __construct($contact_id) {
+  public function  __construct($contact_id) {
     $this->contact_id = $contact_id;
   }
 
@@ -28,12 +28,12 @@ class CRM_Activityical_Cache {
     }
   }
 
-  function retrieve() {
+  public function retrieve() {
     $this->load();
     return $this->cache;
   }
 
-  function clear() {
+  public function clear() {
     $params = array(
       'contact_id' => $this->contact_id,
     );
@@ -48,11 +48,11 @@ class CRM_Activityical_Cache {
     }
   }
 
-  static function clearAll() {
+  public static function clearAll() {
     _activityical_civicrmapi('activityical_cache', 'clearall', array());
   }
 
-  function store($cache) {
+  public function store($cache) {
     $params = array(
       'contact_id' => $this->contact_id,
     );
@@ -85,4 +85,5 @@ class CRM_Activityical_Cache {
       return FALSE;
     }
   }
+
 }

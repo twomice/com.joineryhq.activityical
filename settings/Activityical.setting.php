@@ -10,7 +10,7 @@ return array(
     'is_domain' => 1,
     'is_contact' => 0,
     'description' => ts('Only members of this CiviCRM group will have an activity iCalendar feed.'),
-    'title' =>  ts('Activity iCalendar Feed Group'),
+    'title' => ts('Activity iCalendar Feed Group'),
     'help_text' => '',
     'html_type' => 'Select',
     'html_attributes' => array(
@@ -29,7 +29,7 @@ return array(
     'is_domain' => 1,
     'is_contact' => 0,
     'description' => ts('Select one more more options to limit the feed to the selected activity type(s); or select none to skip this limitation.') . ' (' . ts('Use Ctrl+click to select or unselect multiple options.') . ')',
-    'title' =>  ts('Limit by Activity Type'),
+    'title' => ts('Limit by Activity Type'),
     'help_text' => '',
     'html_type' => 'Select',
     'html_attributes' => array(
@@ -49,7 +49,7 @@ return array(
     'is_domain' => 1,
     'is_contact' => 0,
     'description' => ts('Select one more more options to limit the feed to the selected activity status(es); or select none to skip this limitation.') . ' (' . ts('Use Ctrl+click to select or unselect multiple options.') . ')',
-    'title' =>  ts('Limit by Activity Status'),
+    'title' => ts('Limit by Activity Status'),
     'help_text' => '',
     'html_type' => 'Select',
     'html_attributes' => array(
@@ -84,7 +84,7 @@ return array(
     'is_domain' => 1,
     'is_contact' => 0,
     'description' => ts('Append other assigned contacts to Description?'),
-    'title' =>  ts('Description Includes Assignees'),
+    'title' => ts('Description Includes Assignees'),
     'help_text' => '',
     'html_type' => '',
     'quick_form_type' => 'YesNo',
@@ -104,7 +104,8 @@ return array(
     'html_type' => 'Text',
     'html_attributes' => array(),
     'quick_form_type' => 'Element',
-    'default' => 1220, // 1220 minutes = 12 hours.
+    // 1220 minutes = 12 hours.
+    'default' => 1220,
     'X_form_rules_args' => array(
       array(ts('The field "Max cache lifetime" is required'), 'required'),
       array(ts('The field "Max cache lifetime" must be an integer'), 'integer'),
@@ -150,4 +151,4 @@ return array(
       array(ts('The field "Future days limit" must be an integer.'), 'integer'),
     ),
   ),
- );
+);

@@ -8,8 +8,8 @@ require_once 'CRM/Core/Form.php';
  * @see http://wiki.civicrm.org/confluence/display/CRMDOC43/QuickForm+Reference
  */
 class CRM_Activityical_Form_Details extends CRM_Core_Form {
-  var $feed;
-  var $contact_id;
+  public $feed;
+  public $contact_id;
 
   public function preProcess() {
     $this->contact_id = CRM_Utils_Array::value('contact_id', $_GET, CRM_Core_Session::singleton()->getLoggedInContactID());
@@ -35,7 +35,7 @@ class CRM_Activityical_Form_Details extends CRM_Core_Form {
         $result = _activityical_civicrmapi('contact', 'get', $api_params, FALSE);
       }
       catch (CiviCRM_API3_Exception $e) {
-          CRM_Core_Error::statusBounce($not_found_error);
+        CRM_Core_Error::statusBounce($not_found_error);
       }
       if (empty($result['id'])) {
         CRM_Core_Error::statusBounce($not_found_error);
@@ -130,4 +130,5 @@ class CRM_Activityical_Form_Details extends CRM_Core_Form {
       '&nocache=1' => ts('Get the latest feed data, completely bypassing the feed cache.'),
     );
   }
+
 }

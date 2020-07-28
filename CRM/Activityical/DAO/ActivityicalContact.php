@@ -23,7 +23,7 @@
 | GNU Affero General Public License or the licensing of CiviCRM,     |
 | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
 +--------------------------------------------------------------------+
-*/
+ */
 /**
  * @package CRM
  * @copyright CiviCRM LLC (c) 2004-2015
@@ -33,53 +33,52 @@
  */
 require_once 'CRM/Core/DAO.php';
 require_once 'CRM/Utils/Type.php';
-class CRM_Activityical_DAO_ActivityicalContact extends CRM_Core_DAO
-{
+class CRM_Activityical_DAO_ActivityicalContact extends CRM_Core_DAO {
   /**
    * static instance to hold the table name
    *
    * @var string
    */
-  static $_tableName = 'civicrm_activityicalcontact';
+  public static $_tableName = 'civicrm_activityicalcontact';
   /**
    * static instance to hold the field values
    *
    * @var array
    */
-  static $_fields = null;
+  public static $_fields = NULL;
   /**
    * static instance to hold the keys used in $_fields for each field.
    *
    * @var array
    */
-  static $_fieldKeys = null;
+  public static $_fieldKeys = NULL;
   /**
    * static instance to hold the FK relationships
    *
    * @var string
    */
-  static $_links = null;
+  public static $_links = NULL;
   /**
    * static instance to hold the values that can
    * be imported
    *
    * @var array
    */
-  static $_import = null;
+  public static $_import = NULL;
   /**
    * static instance to hold the values that can
    * be exported
    *
    * @var array
    */
-  static $_export = null;
+  public static $_export = NULL;
   /**
    * static value to see if we should log any modifications to
    * this table in the civicrm_log table
    *
-   * @var boolean
+   * @var bool
    */
-  static $_log = true;
+  public static $_log = TRUE;
   /**
    * Unique ActivityicalContact ID
    *
@@ -98,69 +97,69 @@ class CRM_Activityical_DAO_ActivityicalContact extends CRM_Core_DAO
    * @var varchar 32
    */
   public $hash;
+
   /**
    * class constructor
    *
    * @return civicrm_activityicalcontact
    */
-  function __construct()
-  {
+  public function __construct() {
     $this->__table = 'civicrm_activityicalcontact';
     parent::__construct();
   }
+
   /**
    * Returns foreign keys and entity references
    *
    * @return array
    *   [CRM_Core_Reference_Interface]
    */
-  static function getReferenceColumns()
-  {
+  public static function getReferenceColumns() {
     if (!self::$_links) {
       self::$_links = static ::createReferenceColumns(__CLASS__);
-      self::$_links[] = new CRM_Core_Reference_Basic(self::getTableName() , 'contact_id', 'civicrm_contact', 'id');
+      self::$_links[] = new CRM_Core_Reference_Basic(self::getTableName(), 'contact_id', 'civicrm_contact', 'id');
     }
     return self::$_links;
   }
+
   /**
    * Returns all the column names of this table
    *
    * @return array
    */
-  static function &fields()
-  {
+  public static function &fields() {
     if (!(self::$_fields)) {
       self::$_fields = array(
         'id' => array(
           'name' => 'id',
           'type' => CRM_Utils_Type::T_INT,
           'description' => 'Unique ActivityicalContact ID',
-          'required' => true,
-        ) ,
+          'required' => TRUE,
+        ),
         'contact_id' => array(
           'name' => 'contact_id',
           'type' => CRM_Utils_Type::T_INT,
           'description' => 'FK to Contact',
           'FKClassName' => 'CRM_Contact_DAO_Contact',
-        ) ,
+        ),
         'hash' => array(
           'name' => 'hash',
           'type' => CRM_Utils_Type::T_STRING,
           'title' => ts('Hash') ,
           'description' => 'Private hash per feed',
-        ) ,
+        ),
       );
     }
     return self::$_fields;
   }
+
   /**
    * Returns an array containing, for each field, the arary key used for that
    * field in self::$_fields.
    *
    * @return array
    */
-  static function &fieldKeys()
-  {
+  public static function &fieldKeys() {
     if (!(self::$_fieldKeys)) {
       self::$_fieldKeys = array(
         'id' => 'id',
@@ -170,24 +169,25 @@ class CRM_Activityical_DAO_ActivityicalContact extends CRM_Core_DAO
     }
     return self::$_fieldKeys;
   }
+
   /**
    * Returns the names of this table
    *
    * @return string
    */
-  static function getTableName()
-  {
+  public static function getTableName() {
     return self::$_tableName;
   }
+
   /**
    * Returns if this table needs to be logged
    *
    * @return boolean
    */
-  function getLog()
-  {
+  public function getLog() {
     return self::$_log;
   }
+
   /**
    * Returns the list of fields that can be imported
    *
@@ -195,16 +195,16 @@ class CRM_Activityical_DAO_ActivityicalContact extends CRM_Core_DAO
    *
    * @return array
    */
-  static function &import($prefix = false)
-  {
+  public static function &import($prefix = FALSE) {
     if (!(self::$_import)) {
       self::$_import = array();
       $fields = self::fields();
-      foreach($fields as $name => $field) {
+      foreach ($fields as $name => $field) {
         if (CRM_Utils_Array::value('import', $field)) {
           if ($prefix) {
             self::$_import['activityicalcontact'] = & $fields[$name];
-          } else {
+          }
+          else {
             self::$_import[$name] = & $fields[$name];
           }
         }
@@ -212,6 +212,7 @@ class CRM_Activityical_DAO_ActivityicalContact extends CRM_Core_DAO
     }
     return self::$_import;
   }
+
   /**
    * Returns the list of fields that can be exported
    *
@@ -219,16 +220,16 @@ class CRM_Activityical_DAO_ActivityicalContact extends CRM_Core_DAO
    *
    * @return array
    */
-  static function &export($prefix = false)
-  {
+  public static function &export($prefix = FALSE) {
     if (!(self::$_export)) {
       self::$_export = array();
       $fields = self::fields();
-      foreach($fields as $name => $field) {
+      foreach ($fields as $name => $field) {
         if (CRM_Utils_Array::value('export', $field)) {
           if ($prefix) {
             self::$_export['activityicalcontact'] = & $fields[$name];
-          } else {
+          }
+          else {
             self::$_export[$name] = & $fields[$name];
           }
         }
@@ -236,4 +237,5 @@ class CRM_Activityical_DAO_ActivityicalContact extends CRM_Core_DAO
     }
     return self::$_export;
   }
+
 }
