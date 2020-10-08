@@ -62,8 +62,9 @@ Not all contacts will have a feed. See _Installation and Configuration: Activity
 In Google Calendar, the expected behavior is that linked iCalendar feeds may not be refreshed for several hours. The Google Calendar documentation at https://support.google.com/calendar/answer/37100?hl=en&ref_topic=1672445 says, "It might take up to 12 hours for changes to show in your Google Calendar." Unfortunately, even though the extension is doing its job and always providing a feed with the latest information, it's up to the feed consumer (in this case, Google Calendar) to decide what they want to do with that information and how often they want to refresh it. You can verify that the feed is working properly by acccessing the feed URL directly in your browser.
 
 
-## Help and Improvements
+## Support
+![screenshot](/images/joinery-logo.png)
 
-Please help me improve this extension by using the extension issue queue to report any troubles and to make requests for feature improvements. The issue queue is here: https://github.com/twomice/com.joineryhq.activityical/issues
+Joinery provides services for CiviCRM including custom extension development, training, data migrations, and more. We aim to keep this extension in good working order, and will do our best to respond appropriately to issues reported on its [github issue queue](https://github.com/twomice/com.joineryhq.activityical/issues). In addition, if you require urgent or highly customized improvements to this extension, we may suggest conducting a fee-based project under our standard commercial terms.  In any case, the place to start is the [github issue queue](https://github.com/twomice/com.joineryhq.activityical/issues) -- let us hear what you need and we'll be glad to help however we can.
 
-Issues submitted to the issue queue will be addressed as I have time and interest. Please contact me at allen@joineryhq.com to request paid support.
+And, if you need help with any other aspect of CiviCRM -- from hosting to custom development to strategic consultation and more -- please contact us directly via https://joineryhq.com
