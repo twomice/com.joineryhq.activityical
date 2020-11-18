@@ -16,7 +16,7 @@ CREATE TABLE `civicrm_activityicalcache` (
   PRIMARY KEY ( `id` ),
   CONSTRAINT FK_civicrm_activityicalcache_contact_id FOREIGN KEY (`contact_id`) REFERENCES `civicrm_contact`(`id`) ON DELETE CASCADE,
   UNIQUE KEY `contact_id` (`contact_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB;
 
 -- /*******************************************************
 -- *
@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS `civicrm_activityicalcontact` (
   PRIMARY KEY (`id`),
   CONSTRAINT FK_civicrm_activityicalcontact_contact_id FOREIGN KEY (`contact_id`) REFERENCES `civicrm_contact`(`id`) ON DELETE CASCADE,
   UNIQUE KEY `contact_id` (`contact_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB;
 
 --
 -- Constraints for table `civicrm_activityicalcontact`
