@@ -144,7 +144,7 @@ function activityical_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
 function activityical_civicrm_navigationMenu(&$menu) {
   _activityical_get_max_navID($menu, $max_navID);
   _activityical_civix_insert_navigation_menu($menu, 'Administer/System Settings', array(
-    'label' => ts('Activity iCalendar Feed', array('domain' => 'com.joineryhq.activityical')),
+    'label' => E::ts('Activity iCalendar Feed', array('domain' => 'com.joineryhq.activityical')),
     'name' => 'Activity iCalendar Feed',
     'url' => 'civicrm/admin/activityical/settings',
     'permission' => 'administer CiviCRM',
@@ -176,7 +176,7 @@ function activityical_civicrm_pageRun(&$page) {
           'contact_id' => $contact_id,
         );
         $feed_details_url = CRM_Utils_System::url('civicrm/activityical/details', $url_query, TRUE, NULL, FALSE);
-        CRM_Core_Session::setStatus(ts('Assigned activities are accessible as an iCalendar feed.') . ' ' . '<a href="' . $feed_details_url . '">' . ts('Feed details...') . '</a>');
+        CRM_Core_Session::setStatus(ts('Assigned activities are accessible as an iCalendar feed.') . ' ' . '<a href="' . $feed_details_url . '">' . E::ts('Feed details...') . '</a>');
       }
     }
   }
