@@ -1,5 +1,8 @@
 <?php
 
+require_once 'activityical.civix.php';
+use CRM_Activityical_ExtensionUtil as E;
+
 return array(
   'activityical_group_id' => array(
     'group_name' => 'Activityical Settings',
