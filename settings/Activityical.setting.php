@@ -1,5 +1,8 @@
 <?php
 
+require_once 'activityical.civix.php';
+use CRM_Activityical_ExtensionUtil as E;
+
 return array(
   'activityical_group_id' => array(
     'group_name' => 'Activityical Settings',
@@ -9,8 +12,8 @@ return array(
     'add' => '4.6',
     'is_domain' => 1,
     'is_contact' => 0,
-    'description' => ts('Only members of this CiviCRM group will have an activity iCalendar feed.'),
-    'title' => ts('Activity iCalendar Feed Group'),
+    'description' => E::ts('Only members of this CiviCRM group will have an activity iCalendar feed.'),
+    'title' => E::ts('Activity iCalendar Feed Group'),
     'help_text' => '',
     'html_type' => 'Select',
     'html_attributes' => array(
@@ -28,8 +31,8 @@ return array(
     'add' => '4.6',
     'is_domain' => 1,
     'is_contact' => 0,
-    'description' => ts('Select one more more options to limit the feed to the selected activity type(s); or select none to skip this limitation.') . ' (' . ts('Use Ctrl+click to select or unselect multiple options.') . ')',
-    'title' => ts('Limit by Activity Type'),
+    'description' => E::ts('Select one more more options to limit the feed to the selected activity type(s); or select none to skip this limitation.') . ' (' . E::ts('Use Ctrl+click to select or unselect multiple options.') . ')',
+    'title' => E::ts('Limit by Activity Type'),
     'help_text' => '',
     'html_type' => 'Select',
     'html_attributes' => array(
@@ -48,8 +51,8 @@ return array(
     'add' => '4.6',
     'is_domain' => 1,
     'is_contact' => 0,
-    'description' => ts('Select one more more options to limit the feed to the selected activity status(es); or select none to skip this limitation.') . ' (' . ts('Use Ctrl+click to select or unselect multiple options.') . ')',
-    'title' => ts('Limit by Activity Status'),
+    'description' => E::ts('Select one more more options to limit the feed to the selected activity status(es); or select none to skip this limitation.') . ' (' . E::ts('Use Ctrl+click to select or unselect multiple options.') . ')',
+    'title' => E::ts('Limit by Activity Status'),
     'help_text' => '',
     'html_type' => 'Select',
     'html_attributes' => array(
@@ -68,8 +71,8 @@ return array(
     'add' => '4.6',
     'is_domain' => 1,
     'is_contact' => 0,
-    'description' => ts('Append "with" contacts to Description?'),
-    'title' => ts('Description Includes "With"'),
+    'description' => E::ts('Append "with" contacts to Description?'),
+    'title' => E::ts('Description Includes "With"'),
     'help_text' => '',
     'html_type' => '',
     'quick_form_type' => 'YesNo',
@@ -83,8 +86,8 @@ return array(
     'add' => '4.6',
     'is_domain' => 1,
     'is_contact' => 0,
-    'description' => ts('Append other assigned contacts to Description?'),
-    'title' => ts('Description Includes Assignees'),
+    'description' => E::ts('Append other assigned contacts to Description?'),
+    'title' => E::ts('Description Includes Assignees'),
     'help_text' => '',
     'html_type' => '',
     'quick_form_type' => 'YesNo',
@@ -98,8 +101,8 @@ return array(
     'add' => '4.6',
     'is_domain' => 1,
     'is_contact' => 0,
-    'description' => ts('Maxiumum cache lifetime in minutes. Cached content will be refreshed if it is older than this number of minutes. Set to 0 to disable caching completely.') . ' (' . ts('See any Feed Details page for possible ways to bypass this on a per-request basis.') . ')',
-    'title' => ts('Max Cache Lifetime'),
+    'description' => E::ts('Maxiumum cache lifetime in minutes. Cached content will be refreshed if it is older than this number of minutes. Set to 0 to disable caching completely.') . ' (' . E::ts('See any Feed Details page for possible ways to bypass this on a per-request basis.') . ')',
+    'title' => E::ts('Max Cache Lifetime'),
     'help_text' => '',
     'html_type' => 'Text',
     'html_attributes' => array(),
@@ -119,8 +122,8 @@ return array(
     'add' => '4.6',
     'is_domain' => 1,
     'is_contact' => 0,
-    'description' => ts('Maximum number of days in the past, before which no activities will be included in the feed.') . ' (' . ts('See any Feed Details page for possible ways to bypass this on a per-request basis.') . ')',
-    'title' => ts('Past Days Limit'),
+    'description' => E::ts('Maximum number of days in the past, before which no activities will be included in the feed.') . ' (' . E::ts('See any Feed Details page for possible ways to bypass this on a per-request basis.') . ')',
+    'title' => E::ts('Past Days Limit'),
     'help_text' => '',
     'html_type' => 'Text',
     'html_attributes' => array(),
@@ -139,8 +142,8 @@ return array(
     'add' => '4.6',
     'is_domain' => 1,
     'is_contact' => 0,
-    'description' => ts('Maximum number of days in the future, after which no activities will be included in the feed.') . ' (' . ts('See any Feed Details page for possible ways to bypass this on a per-request basis.') . ')',
-    'title' => ts('Future Days Limit'),
+    'description' => E::ts('Maximum number of days in the future, after which no activities will be included in the feed.') . ' (' . E::ts('See any Feed Details page for possible ways to bypass this on a per-request basis.') . ')',
+    'title' => E::ts('Future Days Limit'),
     'help_text' => '',
     'html_type' => 'Text',
     'html_attributes' => array(),

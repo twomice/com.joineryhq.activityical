@@ -1,6 +1,8 @@
 <?php
 
 require_once 'CRM/Core/Form.php';
+require_once 'activityical.civix.php';
+use CRM_Activityical_ExtensionUtil as E;
 
 /**
  * Form controller class
@@ -26,7 +28,7 @@ class CRM_Activityical_Form_Details extends CRM_Core_Form {
 
     // Show the contact's display name if it's not the current user's contact.
     if ($this->contact_id && ($this->contact_id != CRM_Core_Session::singleton()->getLoggedInContactID())) {
-      $not_found_error = ts('Could not find the given contact.');
+      $not_found_error = E::ts('Could not find the given contact.');
       $api_params = array(
         'sequential' => 1,
         'id' => $this->contact_id,
@@ -41,7 +43,7 @@ class CRM_Activityical_Form_Details extends CRM_Core_Form {
         CRM_Core_Error::statusBounce($not_found_error);
       }
       $this->assign('is_other_contact', TRUE);
-      $display_name = ($result['values'][0]['display_name'] ?: ts('[contact ID %1]', array(1 => $this->contact_id)));
+      $display_name = ($result['values'][0]['display_name'] ?: E::ts('[contact ID %1]', array(1 => $this->contact_id)));
       $this->assign('display_name', $display_name);
     }
 
@@ -49,10 +51,10 @@ class CRM_Activityical_Form_Details extends CRM_Core_Form {
 
     // add form buttons
     if (!empty($display_name)) {
-      $button_name = ts('Rebuild feed URL now, for %1', array(1 => $display_name));
+      $button_name = E::ts('Rebuild feed URL now, for %1', array(1 => $display_name));
     }
     else {
-      $button_name = ts('Rebuild feed URL now');
+      $button_name = E::ts('Rebuild feed URL now');
     }
     $this->addButtons(array(
       array(
@@ -80,7 +82,7 @@ class CRM_Activityical_Form_Details extends CRM_Core_Form {
     // the feed URL.
     $this->feed = CRM_Activityical_Feed::getInstance($this->_submitValues['contact_id']);
     $this->feed->generateHash();
-    CRM_Core_Session::setStatus(" ", ts('URL rebuilt'), "success");
+    CRM_Core_Session::setStatus(" ", E::ts('URL rebuilt'), "success");
     $extra = (!empty($this->_submitValues['contact_id']) ? "&contact_id={$this->_submitValues['contact_id']}" : '');
     CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/activityical/details', 'reset=1' . $extra));
   }
@@ -124,10 +126,10 @@ class CRM_Activityical_Form_Details extends CRM_Core_Form {
     $settings = $result['values'][CRM_Core_Config::domainID()];
 
     return array(
-      '&pdays=N' => ts('Limit the feed to activities within N days before the current date, instead of the default of %1 days.', array(1 => $settings['activityical_past_days'])),
-      '&fdays=N' => ts('Limit the feed to activities within N days after the current date, instead of the default of %1 days.', array(1 => $settings['activityical_future_days'])),
+      '&pdays=N' => E::ts('Limit the feed to activities within N days before the current date, instead of the default of %1 days.', array(1 => $settings['activityical_past_days'])),
+      '&fdays=N' => E::ts('Limit the feed to activities within N days after the current date, instead of the default of %1 days.', array(1 => $settings['activityical_future_days'])),
       // TODO: add a config option to disable this parameter, and if so don't display it here.
-      '&nocache=1' => ts('Get the latest feed data, completely bypassing the feed cache.'),
+      '&nocache=1' => E::ts('Get the latest feed data, completely bypassing the feed cache.'),
     );
   }
 
