@@ -16,5 +16,5 @@ markdown_extensions:
   - pymdownx.tilde
   - pymdownx.betterem
   - pymdownx.mark
-nav:
+pages:
 - Home: index.md
