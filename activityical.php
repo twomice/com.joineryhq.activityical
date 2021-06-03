@@ -397,3 +397,24 @@ function activityical_civicrm_tokenValues(&$values, $cids, $job = NULL, $tokens 
     }
   }
 }
+
+/**
+ * Implements hook_civicrm_merge().
+ */
+function activityical_civicrm_merge($type, &$data, $mainId = NULL, $otherId = NULL, $tables = NULL) {
+  if ($type == 'sqls') {
+    // Set Query using composeQuery method
+    $deleteInIcalCache = CRM_Core_DAO::composeQuery(
+      "DELETE FROM civicrm_activityicalcache WHERE contact_id IN (%1, %2)",
+      [
+        1 => [$mainId, 'Integer'],
+        2 => [$otherId, 'Integer'],
+      ]
+    );
+    $deleteInIcalContact = CRM_Core_DAO::composeQuery("DELETE FROM civicrm_activityicalcontact WHERE contact_id = %1", [1 => [$otherId, 'Integer']]);
+
+    // Insert the two query in the $data array
+    array_unshift($data, $deleteInIcalCache);
+    array_unshift($data, $deleteInIcalContact);
+  }
+}
