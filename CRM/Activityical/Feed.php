@@ -457,6 +457,35 @@ class CRM_Activityical_Feed {
     return $timezone_string;
   }
 
+  public function getTimezoneString_Drupal8() {
+    $timezone_string = '';
+    // If timezones can be configurable per user, get the user's timezone setting.
+    $configurable_timezones = \Drupal::config('system.date')->get('timezone.user.configurable');
+    if ($configurable_timezones == 1) {
+      // Get the global user if no uid is given.
+      $result = _activityical_civicrmapi('UFMatch', 'get', array(
+        'sequential' => 1,
+        'contact_id' => $this->contact_id,
+      ));
+      if (!empty($result['values'])) {
+        $uid = $result['values'][0]['uf_id'];
+        $user = \Drupal\user\Entity\User::load($uid);
+        $user_timezone = $user->getTimeZone();
+        // Get the user's timezone setting, if any.
+        if ($user_timezone) {
+          $timezone_string = $user_timezone;
+        }
+      }
+    }
+    // If no timezone has been found yet, get the system timezone.
+    if (empty($timezone_string)) {
+      // Use @ operator to ignore PHP strict notice if time zone has not yet been
+      // set in the php.ini configuration.
+      $timezone_string = \Drupal::config('system.date')->get('timezone.default') ?? date_default_timezone_get(); 
+    }
+    return $timezone_string;
+  }
+  
   public function getTimezoneString_Joomla() {
     $timezone_string = '';
     $result = _activityical_civicrmapi('UFMatch', 'get', array(
