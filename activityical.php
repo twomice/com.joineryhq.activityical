@@ -181,7 +181,7 @@ function activityical_civicrm_pageRun(&$page) {
     if (_activityical_contact_has_feed_group($contact_id)) {
       $tpl = CRM_Core_Smarty::singleton();
       // Only if this CiviCRM is showing activities on the user dashboard
-      if (isset($tpl->_tpl_vars['activity_rows']) || isset($tpl->_tpl_vars['activity_rowsEmpty'])) {
+      if (isset($tpl->get_template_vars()['activity_rows']) || isset($tpl->get_template_vars()['activity_rowsEmpty'])) {
         $url_query = array(
           'contact_id' => $contact_id,
         );
