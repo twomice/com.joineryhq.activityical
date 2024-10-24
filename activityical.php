@@ -45,15 +45,6 @@ function activityical_civicrm_config(&$config) {
 }
 
 /**
- * Implements hook_civicrm_xmlMenu().
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_xmlMenu
- */
-function activityical_civicrm_xmlMenu(&$files) {
-  _activityical_civix_civicrm_xmlMenu($files);
-}
-
-/**
  * Implements hook_civicrm_install().
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_install
@@ -63,87 +54,12 @@ function activityical_civicrm_install() {
 }
 
 /**
- * Implements hook_civicrm_postInstall().
- *
- * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_postInstall
- */
-function activityical_civicrm_postInstall() {
-  _activityical_civix_civicrm_postInstall();
-}
-
-/**
- * Implements hook_civicrm_uninstall().
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_uninstall
- */
-function activityical_civicrm_uninstall() {
-  _activityical_civix_civicrm_uninstall();
-}
-
-/**
  * Implements hook_civicrm_enable().
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_enable
  */
 function activityical_civicrm_enable() {
   _activityical_civix_civicrm_enable();
-}
-
-/**
- * Implements hook_civicrm_disable().
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_disable
- */
-function activityical_civicrm_disable() {
-  _activityical_civix_civicrm_disable();
-}
-
-/**
- * Implements hook_civicrm_upgrade().
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_upgrade
- */
-function activityical_civicrm_upgrade($op, CRM_Queue_Queue $queue = NULL) {
-  return _activityical_civix_civicrm_upgrade($op, $queue);
-}
-
-/**
- * Implements hook_civicrm_managed().
- *
- * Generate a list of entities to create/deactivate/delete when this module
- * is installed, disabled, uninstalled.
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_managed
- */
-function activityical_civicrm_managed(&$entities) {
-  _activityical_civix_civicrm_managed($entities);
-}
-
-/**
- * Implements hook_civicrm_caseTypes().
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_caseTypes
- */
-function activityical_civicrm_caseTypes(&$caseTypes) {
-  _activityical_civix_civicrm_caseTypes($caseTypes);
-}
-
-/**
- * Implements hook_civicrm_angularModules().
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_caseTypes
- */
-function activityical_civicrm_angularModules(&$angularModules) {
-  _activityical_civix_civicrm_angularModules($angularModules);
-}
-
-/**
- * Implements hook_civicrm_alterSettingsFolders().
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_alterSettingsFolders
- */
-function activityical_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
-  _activityical_civix_civicrm_alterSettingsFolders($metaDataFolders);
 }
 
 /**
@@ -191,50 +107,48 @@ function activityical_civicrm_pageRun(&$page) {
     }
   }
 
-  if (!empty($_GET['snippet']) && $_GET['snippet'] == 'json' && $page_name == 'CRM_Activity_Page_Tab') {
-    if (implode('/', $page->urlPath) == 'civicrm/contact/view/activity') {
-      // Do this only on the contact Activities tab.
+  elseif ($page_name == 'CRM_Activity_Page_Tab') {
+    // Do this only on the contact Activities tab.
 
-      $contact_id = $page->_contactId;
-      if (!_activityical_contact_has_feed_group($contact_id)) {
-        // Contact cannot have a feed. We'll add no links. Just return.
-        return;
-      }
-
-      // Prepare to parse a Smarty template.
-      $tpl = CRM_Core_Smarty::singleton();
-
-      // Figure out if we should display the "details" link.
-      if (
-        CRM_Core_Permission::check('administer CiviCRM')
-        || $contact_id == CRM_Core_Session::singleton()->getLoggedInContactID()
-      ) {
-        $tpl->assign('access_details', TRUE);
-      }
-
-      // Get the feed details URL for this contact.
-      $url_query = array(
-        'contact_id' => $contact_id,
-      );
-      $feed_details_url = CRM_Utils_System::url('civicrm/activityical/details', $url_query, TRUE, NULL, FALSE);
-      $tpl->assign('contact_id', $contact_id);
-
-      // Get the feed URL for this contact.
-      $feed = CRM_Activityical_Feed::getInstance($contact_id);
-      $tpl->assign('feed_url', $feed->getUrl());
-
-      // Render the template.
-      $snippet = $tpl->fetch('CRM/Activityical/snippet/ActivitiesTabExtra.tpl');
-
-      // Add JS and CSS to insert the renered template into the Activities tab.
-      $vars = array(
-        'snippet' => $snippet,
-      );
-      $resource = CRM_Core_Resources::singleton();
-      $resource->addVars('activityical', $vars);
-      $resource->addScriptFile('com.joineryhq.activityical', 'js/actiivtyical_activities_tab.js');
-      $resource->addStyleFile('com.joineryhq.activityical', 'css/extension.css');
+    $contact_id = $page->_contactId;
+    if (!_activityical_contact_has_feed_group($contact_id)) {
+      // Contact cannot have a feed. We'll add no links. Just return.
+      return;
     }
+
+    // Prepare to parse a Smarty template.
+    $tpl = CRM_Core_Smarty::singleton();
+
+    // Figure out if we should display the "details" link.
+    if (
+      CRM_Core_Permission::check('administer CiviCRM')
+      || $contact_id == CRM_Core_Session::singleton()->getLoggedInContactID()
+    ) {
+      $tpl->assign('access_details', TRUE);
+    }
+
+    // Get the feed details URL for this contact.
+    $url_query = array(
+      'contact_id' => $contact_id,
+    );
+    $feed_details_url = CRM_Utils_System::url('civicrm/activityical/details', $url_query, TRUE, NULL, FALSE);
+    $tpl->assign('contact_id', $contact_id);
+
+    // Get the feed URL for this contact.
+    $feed = CRM_Activityical_Feed::getInstance($contact_id);
+    $tpl->assign('feed_url', $feed->getUrl());
+
+    // Render the template.
+    $snippet = $tpl->fetch('CRM/Activityical/snippet/ActivitiesTabExtra.tpl');
+
+    // Add JS and CSS to insert the renered template into the Activities tab.
+    $vars = array(
+      'snippet' => $snippet,
+    );
+    $resource = CRM_Core_Resources::singleton();
+    $resource->addVars('activityical', $vars);
+    $resource->addScriptFile('com.joineryhq.activityical', 'js/actiivtyical_activities_tab.js');
+    $resource->addStyleFile('com.joineryhq.activityical', 'css/extension.css');
   }
 }
 
