@@ -23,5 +23,17 @@
   <comments>Based on http://drupal.org/project/civicrm_activity_ical, CMS-independent extension development sponsored by The Saturday Light Brigade.</comments>
   <civix>
     <namespace>CRM/Activityical</namespace>
+    <format>25.01.0</format>
   </civix>
+  <mixins>
+    <mixin>menu-xml@1.0.0</mixin>
+    <mixin>setting-php@1.0.0</mixin>
+    <mixin>smarty-v2@1.0.3</mixin>
+    <mixin>entity-types-php@2.0.0</mixin>
+  </mixins>
+  <classloader>
+    <psr0 prefix="CRM_" path="."/>
+    <psr4 prefix="Civi\" path="Civi"/>
+  </classloader>
+  <upgrader>CiviMix\Schema\Activityical\AutomaticUpgrader</upgrader>
 </extension>
