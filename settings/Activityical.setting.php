@@ -1,6 +1,5 @@
 <?php
 
-require_once 'activityical.civix.php';
 use CRM_Activityical_ExtensionUtil as E;
 
 return array(
