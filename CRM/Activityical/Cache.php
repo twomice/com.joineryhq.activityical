@@ -22,7 +22,7 @@ class CRM_Activityical_Cache {
       }
       $result = _activityical_civicrmapi('activityical_cache', 'get', $params);
       if ($result['count']) {
-        $this->cache = CRM_Utils_Array::value('cache', $result['values'][0], '');
+        $this->cache = $result['values'][0]['cache'] ?? '';
       }
       $this->loaded = TRUE;
     }
@@ -38,7 +38,7 @@ class CRM_Activityical_Cache {
       'contact_id' => $this->contact_id,
     );
     $result = _activityical_civicrmapi('activityical_cache', 'get', $params);
-    $id = CRM_Utils_Array::value('id', $result);
+    $id = $result['id'] ?? NULL;
 
     if ($id) {
       $params = array(
@@ -59,7 +59,7 @@ class CRM_Activityical_Cache {
     $result = _activityical_civicrmapi('activityical_cache', 'get', $params);
 
     $params = array(
-      'id' => CRM_Utils_Array::value('id', $result),
+      'id' => $result['id'] ?? NULL,
       'contact_id' => $this->contact_id,
       'cache' => $cache,
     );
@@ -76,7 +76,7 @@ class CRM_Activityical_Cache {
       ),
     );
     $result = _activityical_civicrmapi('setting', 'get', $api_params);
-    if ($cache_lifetime_minutes = CRM_Utils_Array::value('activityical_cache_lifetime', $result['values'][CRM_Core_Config::domainID()], 0)) {
+    if ($cache_lifetime_minutes = $result['values'][CRM_Core_Config::domainID()]['activityical_cache_lifetime'] ?? 0) {
       $time = time();
       $min_cache_time = $time - ($cache_lifetime_minutes * 60);
       return date('Y-m-d H:i:s', $min_cache_time);

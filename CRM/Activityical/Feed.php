@@ -30,7 +30,7 @@ class CRM_Activityical_Feed {
     );
     $result = _activityical_civicrmapi('activityical_contact', 'get', $params);
 
-    if ($result['count'] && $hash = CRM_Utils_Array::value('hash', $result['values'][0])) {
+    if ($result['count'] && $hash = $result['values'][0]['hash'] ?? NULL) {
       $this->hash = $hash;
     }
     else {
@@ -168,7 +168,7 @@ class CRM_Activityical_Feed {
       $activityical_past_days = $this->query_params['pdays'];
     }
     else {
-      $activityical_past_days = CRM_Utils_Array::value('activityical_past_days', $settings, 0);
+      $activityical_past_days = $settings['activityical_past_days'] ?? 0;
     }
     $i = $placeholder_count++;
     $placeholders['activityical_past_days'] = '%' . $i;
@@ -182,7 +182,7 @@ class CRM_Activityical_Feed {
       $activityical_future_days = $this->query_params['fdays'];
     }
     else {
-      $activityical_future_days = CRM_Utils_Array::value('activityical_future_days', $settings, 0);
+      $activityical_future_days = $settings['activityical_future_days'] ?? 0;
     }
     $i = $placeholder_count++;
     $placeholders['activityical_future_days'] = '%' . $i;
@@ -349,7 +349,7 @@ class CRM_Activityical_Feed {
         ),
       );
       $result = _activityical_civicrmapi('setting', 'get', $api_params);
-      $use_cache = (bool) CRM_Utils_Array::value('activityical_cache_lifetime', $result['values'][CRM_Core_Config::domainID()], 0);
+      $use_cache = (bool) $result['values'][CRM_Core_Config::domainID()]['activityical_cache_lifetime'] ?? 0;
     }
     return $use_cache;
   }
