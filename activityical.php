@@ -154,31 +154,29 @@ function activityical_civicrm_pageRun(&$page) {
   }
 }
 
-function _activityical_contact_has_feed_group($contact_id) {
-  // Check $this->_params['contact_id'] that they have the right civicrm group.
-  $result = _activityical_civicrmapi('setting', 'get', array('return' => 'activityical_group_id'));
-  $domainID = CRM_Core_Config::domainID();
-  $group_id = $result['values'][$domainID]['activityical_group_id'];
+/**
+ * Check whether a contact is in the group which means
+ * they should have a feed
+ * @return bool
+ */
+function _activityical_contact_has_feed_group($contact_id): bool {
+  $group_id = \Civi::settings()->get('activityical_group_id');
   if (empty($group_id)) {
     // No group defined; nobody can be in an undefined group.
     return FALSE;
   }
-  $api_params = array(
-    'group_id' => $group_id,
-    'contact_id' => $contact_id,
-  );
-  $result = _activityical_civicrmapi('group_contact', 'get', $api_params);
-  if (!$result['count']) {
-    return FALSE;
-  }
 
-  return TRUE;
+  // will return contact if they are in the group, or null if not
+  // Api4 should handle smart groups seamlessly too
+  $contactInGroup = \Civi\Api4\Contact::get(FALSE)
+    ->addSelect('id')
+    ->addWhere('id', '=', $contact_id)
+    ->addWhere('groups', 'IN', [$group_id])
+    ->execute()
+    ->first();
+
+  return !!$contactInGroup;
 }
-
-/**
- * Implements hook_civicrm_entityTypes().
- */
-
 
 /**
  * Implements hook_civicrm_pre().
