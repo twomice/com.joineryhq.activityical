@@ -223,8 +223,8 @@ class CRM_Activityical_Feed {
       SELECT
         contact_primary.id as contact_id,
         civicrm_activity.id,
-        source.id AS source_id,
-        source.display_name AS `source_display_name`,
+        MIN(source.id) AS source_id,
+        MIN(source.display_name) AS `source_display_name`,
         GROUP_CONCAT(
           DISTINCT
           other_assignee.display_name
@@ -236,7 +236,7 @@ class CRM_Activityical_Feed {
           SEPARATOR '; '
         ) AS targets,
         civicrm_activity.activity_type_id,
-        activity_type.label AS activity_type,
+        MIN(activity_type.label) AS activity_type,
         civicrm_activity.subject AS activity_subject,
         civicrm_activity.activity_date_time AS activity_date_time,
         civicrm_activity.duration AS activity_duration,
