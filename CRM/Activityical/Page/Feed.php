@@ -5,7 +5,7 @@ require_once 'CRM/Core/Page.php';
 class CRM_Activityical_Page_Feed extends CRM_Core_Page {
 
   public function run() {
-    $contact_id = CRM_Utils_Array::value('cid', $_GET);
+    $contact_id = $_GET['cid'] ?? NULL;
     $feed = CRM_Activityical_Feed::getInstance($contact_id);
     $output = $feed->getContents();
 

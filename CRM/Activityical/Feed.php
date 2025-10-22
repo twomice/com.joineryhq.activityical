@@ -78,7 +78,7 @@ class CRM_Activityical_Feed {
       'contact_id' => $this->contact_id,
     );
     $result = _activityical_civicrmapi('activityical_contact', 'get', $params);
-    $id = CRM_Utils_Array::value('id', $result);
+    $id = $result['id'] ?? NULL;
 
     $params = array(
       'id' => $id,

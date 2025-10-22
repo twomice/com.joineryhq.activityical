@@ -42,8 +42,8 @@ class CRM_Activityical_Permission {
   }
 
   public function viewFeed() {
-    $contact_id = CRM_Utils_Array::value('cid', $this->_params);
-    $hash = CRM_Utils_Array::value('key', $this->_params);
+    $contact_id = $this->_params['cid'] ?? NULL;
+    $hash = $this->_params['key'] ?? NULL;
 
     // Ensure correct parameters.
     if (empty($contact_id) || empty($hash)) {
@@ -65,7 +65,7 @@ class CRM_Activityical_Permission {
   public function manageFeedDetails() {
     // Only allow access if no contact_id is given (working on my own contact)
     // or user has 'administer civicrm'.
-    $contact_id = CRM_Utils_Array::value('contact_id', $this->_params);
+    $contact_id = $this->_params['contact_id'] ?? NULL;
     return (
       !$contact_id
       || $contact_id == CRM_Core_Session::singleton()->getLoggedInContactID()
