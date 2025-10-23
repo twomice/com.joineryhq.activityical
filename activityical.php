@@ -186,7 +186,7 @@ function activityical_civicrm_pre($op, $objectName, $objectId, &$params) {
   )) {
     // If we're changing an activity, clear activityical cache for any new or
     // old assignees.
-    $id = $objectId ?: CRM_Utils_Array::value('id', $params);
+    $id = $objectId ?: ($params['id'] ?? NULL);
     if ($id) {
       $contact_ids = array();
       $api_params = array(
@@ -197,7 +197,7 @@ function activityical_civicrm_pre($op, $objectName, $objectId, &$params) {
       foreach ($result['values'] as $value) {
         $contact_ids[$value['contact_id']] = 1;
       }
-      foreach (CRM_Utils_Array::value('assignee_contact_id', $params, array()) as $contact_id) {
+      foreach (($params['assignee_contact_id'] ?? []) as $contact_id) {
         $contact_ids[$contact_id] = 1;
       }
       foreach (array_keys($contact_ids) as $contact_id) {
