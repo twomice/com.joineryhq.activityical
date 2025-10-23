@@ -316,7 +316,14 @@ class CRM_Activityical_Feed {
       // FIXME: how to handle timezones?
       // $row['activity_date_time'] = civicrm_activity_contact_datetime_to_utc($row['activity_date_time'], $this->contact_id);
 
-      $return[] = $row;
+      // Allow Extensions to modify ical row
+      $hookEvent = \Civi\Core\Event\GenericHookEvent::create([
+        'activityId' => $row['id'],
+        'row' => $row,
+      ]);
+      \Civi::dispatcher()->dispatch('civi.activityical.feed_item_details', $hookEvent);
+
+      $return[] = $hookEvent->row;
     }
     return $return;
   }
@@ -481,11 +488,11 @@ class CRM_Activityical_Feed {
     if (empty($timezone_string)) {
       // Use @ operator to ignore PHP strict notice if time zone has not yet been
       // set in the php.ini configuration.
-      $timezone_string = \Drupal::config('system.date')->get('timezone.default') ?? date_default_timezone_get(); 
+      $timezone_string = \Drupal::config('system.date')->get('timezone.default') ?? date_default_timezone_get();
     }
     return $timezone_string;
   }
-  
+
   public function getTimezoneString_Joomla() {
     $timezone_string = '';
     $result = _activityical_civicrmapi('UFMatch', 'get', array(
