@@ -180,7 +180,7 @@ class CRM_Activityical_Form_Settings extends CRM_Core_Form {
   public function setDefaultValues() {
     $result = _activityical_civicrmapi('setting', 'get', array('return' => array_keys($this->_settings)));
     $domainID = CRM_Core_Config::domainID();
-    $ret = $result['values'][$domainID] ?? NULL;
+    $ret = $result['values'][$domainID] ?? [];
     return $ret;
   }
 

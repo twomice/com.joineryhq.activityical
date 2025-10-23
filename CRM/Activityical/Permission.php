@@ -9,7 +9,7 @@ class CRM_Activityical_Permission {
    * We only need one instance of this object. So we use the singleton
    * pattern and cache the instance in this variable
    *
-   * @var CRM_Core_Config
+   * @var CRM_Activityical_Permission
    */
   private static $_singleton = NULL;
 
@@ -28,7 +28,7 @@ class CRM_Activityical_Permission {
   /**
    * Singleton function used to manage this object.
    *
-   * @return CRM_Core_Config
+   * @return CRM_Activityical_Permission
    */
   public static function &singleton($params = NULL) {
     if (self::$_singleton === NULL) {

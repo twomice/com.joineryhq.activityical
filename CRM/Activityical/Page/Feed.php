@@ -11,7 +11,7 @@ class CRM_Activityical_Page_Feed extends CRM_Core_Page {
 
     // TODO: support caching; use cache time instaed of time();
     $time = time();
-    header('Last-Modified: ' . gmdate('D, d M Y H:i:s \G\M\T', $time));
+    CRM_Utils_System::setHttpHeader('Last-Modified', gmdate('D, d M Y H:i:s \G\M\T', $time));
     require_once 'CRM/Utils/ICalendar.php';
     CRM_Utils_ICalendar::send($output, 'text/calendar', NULL, 'civicrm_activities.ical', 'attachment');
     exit;
