@@ -36,7 +36,7 @@ class CRM_Activityical_Form_Details extends CRM_Core_Form {
       try {
         $result = _activityical_civicrmapi('contact', 'get', $api_params, FALSE);
       }
-      catch (CiviCRM_API3_Exception $e) {
+      catch (CRM_Core_Exception $e) {
         CRM_Core_Error::statusBounce($not_found_error);
       }
       if (empty($result['id'])) {
