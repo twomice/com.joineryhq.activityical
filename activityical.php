@@ -105,50 +105,48 @@ function activityical_civicrm_pageRun(&$page) {
     }
   }
 
-  if (!empty($_GET['snippet']) && $_GET['snippet'] == 'json' && $page_name == 'CRM_Activity_Page_Tab') {
-    if (implode('/', $page->urlPath) == 'civicrm/contact/view/activity') {
-      // Do this only on the contact Activities tab.
+  elseif ($page_name == 'CRM_Activity_Page_Tab') {
+    // Do this only on the contact Activities tab.
 
-      $contact_id = $page->_contactId;
-      if (!_activityical_contact_has_feed_group($contact_id)) {
-        // Contact cannot have a feed. We'll add no links. Just return.
-        return;
-      }
-
-      // Prepare to parse a Smarty template.
-      $tpl = CRM_Core_Smarty::singleton();
-
-      // Figure out if we should display the "details" link.
-      if (
-        CRM_Core_Permission::check('administer CiviCRM')
-        || $contact_id == CRM_Core_Session::singleton()->getLoggedInContactID()
-      ) {
-        $tpl->assign('access_details', TRUE);
-      }
-
-      // Get the feed details URL for this contact.
-      $url_query = array(
-        'contact_id' => $contact_id,
-      );
-      $feed_details_url = CRM_Utils_System::url('civicrm/activityical/details', $url_query, TRUE, NULL, FALSE);
-      $tpl->assign('contact_id', $contact_id);
-
-      // Get the feed URL for this contact.
-      $feed = CRM_Activityical_Feed::getInstance($contact_id);
-      $tpl->assign('feed_url', $feed->getUrl());
-
-      // Render the template.
-      $snippet = $tpl->fetch('CRM/Activityical/snippet/ActivitiesTabExtra.tpl');
-
-      // Add JS and CSS to insert the renered template into the Activities tab.
-      $vars = array(
-        'snippet' => $snippet,
-      );
-      $resource = CRM_Core_Resources::singleton();
-      $resource->addVars('activityical', $vars);
-      $resource->addScriptFile('com.joineryhq.activityical', 'js/actiivtyical_activities_tab.js');
-      $resource->addStyleFile('com.joineryhq.activityical', 'css/extension.css');
+    $contact_id = $page->_contactId;
+    if (!_activityical_contact_has_feed_group($contact_id)) {
+      // Contact cannot have a feed. We'll add no links. Just return.
+      return;
     }
+
+    // Prepare to parse a Smarty template.
+    $tpl = CRM_Core_Smarty::singleton();
+
+    // Figure out if we should display the "details" link.
+    if (
+      CRM_Core_Permission::check('administer CiviCRM')
+      || $contact_id == CRM_Core_Session::singleton()->getLoggedInContactID()
+    ) {
+      $tpl->assign('access_details', TRUE);
+    }
+
+    // Get the feed details URL for this contact.
+    $url_query = array(
+      'contact_id' => $contact_id,
+    );
+    $feed_details_url = CRM_Utils_System::url('civicrm/activityical/details', $url_query, TRUE, NULL, FALSE);
+    $tpl->assign('contact_id', $contact_id);
+
+    // Get the feed URL for this contact.
+    $feed = CRM_Activityical_Feed::getInstance($contact_id);
+    $tpl->assign('feed_url', $feed->getUrl());
+
+    // Render the template.
+    $snippet = $tpl->fetch('CRM/Activityical/snippet/ActivitiesTabExtra.tpl');
+
+    // Add JS and CSS to insert the renered template into the Activities tab.
+    $vars = array(
+      'snippet' => $snippet,
+    );
+    $resource = CRM_Core_Resources::singleton();
+    $resource->addVars('activityical', $vars);
+    $resource->addScriptFile('com.joineryhq.activityical', 'js/actiivtyical_activities_tab.js');
+    $resource->addStyleFile('com.joineryhq.activityical', 'css/extension.css');
   }
 }
 
