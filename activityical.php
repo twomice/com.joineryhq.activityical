@@ -61,6 +61,18 @@ function activityical_civicrm_enable() {
 }
 
 /**
+ * Implements hook_civicrm_flush().
+ *
+ * Clear the cached iCalendar feed data so it is regenerated after a cache
+ * flush (e.g. `cv flush`).
+ *
+ * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_flush/
+ */
+function activityical_civicrm_flush() {
+  CRM_Activityical_Cache::clearAll();
+}
+
+/**
  * Implements hook_civicrm_navigationMenu().
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_navigationMenu
