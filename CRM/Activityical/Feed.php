@@ -362,6 +362,15 @@ class CRM_Activityical_Feed {
   }
 
   public function getFeed() {
+    // Determine whether to include the link (URL) to the CiviCRM activity view.
+    $api_params = array(
+      'return' => array(
+        'activityical_include_url',
+      ),
+    );
+    $result = _activityical_civicrmapi('setting', 'get', $api_params);
+    $include_url = (bool) ($result['values'][CRM_Core_Config::domainID()]['activityical_include_url'] ?? 1);
+
     $activities = $this->getData();
     foreach ($activities as &$activity) {
       // Define URL to activity.
@@ -376,6 +385,7 @@ class CRM_Activityical_Feed {
     require_once 'CRM/Core/Smarty.php';
     $tpl = CRM_Core_Smarty::singleton();
     $tpl->assign('activities', $activities);
+    $tpl->assign('include_url', $include_url);
 
     // Assign base_url to be used in links.
     global $base_url;
