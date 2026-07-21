@@ -33,7 +33,7 @@ URL:{$activity.url}
 {/if}
 CONTACT;ALTREP={$base_url}/civicrm/contact/view?reset=1&cid={$activity.source_id}:{$activity.source_display_name}
 X-ALT-DESC;FMTTYPE=text/html:
- {$activity.description|activityicalHtml}
+ {$activity.description|crmICalText:true:29}
 END:VEVENT
 {/foreach}
 END:VCALENDAR
