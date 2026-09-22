@@ -23,7 +23,7 @@ function smarty_modifier_activityicalHtml($str) {
   $ret = str_replace('\\', '\\\\', $ret);
   $ret = str_replace(',', '\,', $ret);
   $ret = str_replace(';', '\;', $ret);
-  $ret = str_replace(array("\r\n", "\n", "\r"), "\\n ", $ret);
+  $ret = str_replace(["\r\n", "\n", "\r"], "\\n ", $ret);
   $ret = implode("\n ", str_split($ret, 50));
   return $ret;
 }

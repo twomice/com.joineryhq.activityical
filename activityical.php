@@ -79,15 +79,15 @@ function activityical_civicrm_flush() {
  */
 function activityical_civicrm_navigationMenu(&$menu) {
   _activityical_get_max_navID($menu, $max_navID);
-  _activityical_civix_insert_navigation_menu($menu, 'Administer/System Settings', array(
-    'label' => E::ts('Activity iCalendar Feed', array('domain' => 'com.joineryhq.activityical')),
+  _activityical_civix_insert_navigation_menu($menu, 'Administer/System Settings', [
+    'label' => E::ts('Activity iCalendar Feed', ['domain' => 'com.joineryhq.activityical']),
     'name' => 'Activity iCalendar Feed',
     'url' => 'civicrm/admin/activityical/settings',
     'permission' => 'administer CiviCRM',
     'operator' => 'AND',
     'separator' => NULL,
     'navID' => ++$max_navID,
-  ));
+  ]);
   _activityical_civix_navigationMenu($menu);
 }
 
@@ -108,9 +108,9 @@ function activityical_civicrm_pageRun(&$page) {
       $tpl = CRM_Core_Smarty::singleton();
       // Only if this CiviCRM is showing activities on the user dashboard
       if (isset($tpl->getTemplateVars()['activity_rows']) || isset($tpl->getTemplateVars()['activity_rowsEmpty'])) {
-        $url_query = array(
+        $url_query = [
           'contact_id' => $contact_id,
-        );
+        ];
         $feed_details_url = CRM_Utils_System::url('civicrm/activityical/details', $url_query, TRUE, NULL, FALSE);
         CRM_Core_Session::setStatus(ts('Assigned activities are accessible as an iCalendar feed.') . ' ' . '<a href="' . $feed_details_url . '">' . E::ts('Feed details...') . '</a>');
       }
@@ -139,9 +139,9 @@ function activityical_civicrm_pageRun(&$page) {
       }
 
       // Get the feed details URL for this contact.
-      $url_query = array(
+      $url_query = [
         'contact_id' => $contact_id,
-      );
+      ];
       $feed_details_url = CRM_Utils_System::url('civicrm/activityical/details', $url_query, TRUE, NULL, FALSE);
       $tpl->assign('contact_id', $contact_id);
 
@@ -153,9 +153,9 @@ function activityical_civicrm_pageRun(&$page) {
       $snippet = $tpl->fetch('CRM/Activityical/snippet/ActivitiesTabExtra.tpl');
 
       // Add JS and CSS to insert the renered template into the Activities tab.
-      $vars = array(
+      $vars = [
         'snippet' => $snippet,
-      );
+      ];
       $resource = CRM_Core_Resources::singleton();
       $resource->addVars('activityical', $vars);
       $resource->addScriptFile('com.joineryhq.activityical', 'js/actiivtyical_activities_tab.js');
@@ -200,11 +200,11 @@ function activityical_civicrm_pre($op, $objectName, $objectId, &$params) {
     // old assignees.
     $id = $objectId ?: ($params['id'] ?? NULL);
     if ($id) {
-      $contact_ids = array();
-      $api_params = array(
+      $contact_ids = [];
+      $api_params = [
         'activity_id' => $id,
         'record_type_id' => 1,
-      );
+      ];
       $result = _activityical_civicrmapi('activity_contact', 'get', $api_params);
       foreach ($result['values'] as $value) {
         $contact_ids[$value['contact_id']] = 1;
@@ -226,11 +226,11 @@ function activityical_civicrm_pre($op, $objectName, $objectId, &$params) {
 function activityical_civicrm_post($op, $objectName, $objectId, &$objectRef) {
   if ($objectName == 'Activity' && $op == 'create') {
     // If we've created an activity, clear activityical cache for any assignees.
-    $contact_ids = array();
-    $api_params = array(
+    $contact_ids = [];
+    $api_params = [
       'activity_id' => $objectId,
       'record_type_id' => 1,
-    );
+    ];
     $result = _activityical_civicrmapi('activity_contact', 'get', $api_params);
     foreach ($result['values'] as $value) {
       $cache = new CRM_Activityical_Cache($value['contact_id']);

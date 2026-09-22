@@ -2,8 +2,8 @@
 
 use CRM_Activityical_ExtensionUtil as E;
 
-return array(
-  'activityical_group_id' => array(
+return [
+  'activityical_group_id' => [
     'group_name' => 'Activityical Settings',
     'group' => 'activityical',
     'name' => 'activityical_group_id',
@@ -15,14 +15,14 @@ return array(
     'title' => E::ts('Activity iCalendar Feed Group'),
     'help_text' => '',
     'html_type' => 'Select',
-    'html_attributes' => array(
+    'html_attributes' => [
       'size' => 10,
       'class' => 'crm-form-multiselect activityical-settings-select',
-    ),
+    ],
     'quick_form_type' => 'Element',
     'X_options_callback' => 'CRM_Activityical_Form_Settings::getGroupOptions',
-  ),
-  'activityical_activity_type_ids' => array(
+  ],
+  'activityical_activity_type_ids' => [
     'group_name' => 'Activityical Settings',
     'group' => 'activityical',
     'name' => 'activityical_activity_type_ids',
@@ -34,15 +34,15 @@ return array(
     'title' => E::ts('Limit by Activity Type'),
     'help_text' => '',
     'html_type' => 'Select',
-    'html_attributes' => array(
+    'html_attributes' => [
       'multiple' => TRUE,
       'size' => 10,
       'class' => 'crm-form-multiselect activityical-settings-select',
-    ),
+    ],
     'quick_form_type' => 'Element',
     'X_options_callback' => 'CRM_Activityical_Form_Settings::getActivityTypeOptions',
-  ),
-  'activityical_activity_status_ids' => array(
+  ],
+  'activityical_activity_status_ids' => [
     'group_name' => 'Activityical Settings',
     'group' => 'activityical',
     'name' => 'activityical_activity_status_ids',
@@ -54,15 +54,15 @@ return array(
     'title' => E::ts('Limit by Activity Status'),
     'help_text' => '',
     'html_type' => 'Select',
-    'html_attributes' => array(
+    'html_attributes' => [
       'multiple' => TRUE,
       'size' => 10,
       'class' => 'crm-form-multiselect activityical-settings-select',
-    ),
+    ],
     'quick_form_type' => 'Element',
     'X_options_callback' => 'CRM_Activityical_Form_Settings::getActivityStatusOptions',
-  ),
-  'activityical_description_append_targets' => array(
+  ],
+  'activityical_description_append_targets' => [
     'group_name' => 'Activityical Settings',
     'group' => 'activityical',
     'name' => 'activityical_description_append_targets',
@@ -76,8 +76,8 @@ return array(
     'html_type' => '',
     'quick_form_type' => 'YesNo',
     'default' => 1,
-  ),
-  'activityical_description_append_assignees' => array(
+  ],
+  'activityical_description_append_assignees' => [
     'group_name' => 'Activityical Settings',
     'group' => 'activityical',
     'name' => 'activityical_description_append_assignees',
@@ -91,8 +91,8 @@ return array(
     'html_type' => '',
     'quick_form_type' => 'YesNo',
     'default' => 1,
-  ),
-  'activityical_include_url' => array(
+  ],
+  'activityical_include_url' => [
     'group_name' => 'Activityical Settings',
     'group' => 'activityical',
     'name' => 'activityical_include_url',
@@ -106,8 +106,8 @@ return array(
     'html_type' => '',
     'quick_form_type' => 'YesNo',
     'default' => 1,
-  ),
-  'activityical_cache_lifetime' => array(
+  ],
+  'activityical_cache_lifetime' => [
     'group_name' => 'Activityical Settings',
     'group' => 'activityical',
     'name' => 'activityical_cache_lifetime',
@@ -119,16 +119,16 @@ return array(
     'title' => E::ts('Max Cache Lifetime'),
     'help_text' => '',
     'html_type' => 'Text',
-    'html_attributes' => array(),
+    'html_attributes' => [],
     'quick_form_type' => 'Element',
     // 1220 minutes = 12 hours.
     'default' => 1220,
-    'X_form_rules_args' => array(
-      array(ts('The field "Max cache lifetime" is required'), 'required'),
-      array(ts('The field "Max cache lifetime" must be an integer'), 'integer'),
-    ),
-  ),
-  'activityical_past_days' => array(
+    'X_form_rules_args' => [
+      [ts('The field "Max cache lifetime" is required'), 'required'],
+      [ts('The field "Max cache lifetime" must be an integer'), 'integer'],
+    ],
+  ],
+  'activityical_past_days' => [
     'group_name' => 'Activityical Settings',
     'group' => 'activityical',
     'name' => 'activityical_past_days',
@@ -140,15 +140,15 @@ return array(
     'title' => E::ts('Past Days Limit'),
     'help_text' => '',
     'html_type' => 'Text',
-    'html_attributes' => array(),
+    'html_attributes' => [],
     'quick_form_type' => 'Element',
     'default' => 30,
-    'X_form_rules_args' => array(
-      array(ts('The field "Past days limit" is required.'), 'required'),
-      array(ts('The field "Past days limit" must be an integer.'), 'integer'),
-    ),
-  ),
-  'activityical_future_days' => array(
+    'X_form_rules_args' => [
+      [ts('The field "Past days limit" is required.'), 'required'],
+      [ts('The field "Past days limit" must be an integer.'), 'integer'],
+    ],
+  ],
+  'activityical_future_days' => [
     'group_name' => 'Activityical Settings',
     'group' => 'activityical',
     'name' => 'activityical_future_days',
@@ -160,12 +160,12 @@ return array(
     'title' => E::ts('Future Days Limit'),
     'help_text' => '',
     'html_type' => 'Text',
-    'html_attributes' => array(),
+    'html_attributes' => [],
     'quick_form_type' => 'Element',
     'default' => 30,
-    'X_form_rules_args' => array(
-      array(ts('The field "Future days limit" is required.'), 'required'),
-      array(ts('The field "Future days limit" must be an integer.'), 'integer'),
-    ),
-  ),
-);
+    'X_form_rules_args' => [
+      [ts('The field "Future days limit" is required.'), 'required'],
+      [ts('The field "Future days limit" must be an integer.'), 'integer'],
+    ],
+  ],
+];

@@ -60,7 +60,7 @@ function civicrm_api3_activityical_cache_clearall($params) {
   if ($result === FALSE) {
     throw new API_Exception('Could not delete all cache entries.');
   }
-  return civicrm_api3_create_success($result, array(), 'activityical_cach', 'clearall');
+  return civicrm_api3_create_success($result, [], 'activityical_cach', 'clearall');
 }
 
 /**
