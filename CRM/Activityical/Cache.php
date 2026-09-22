@@ -12,13 +12,13 @@ class CRM_Activityical_Cache {
 
   private function load($force_load = FALSE) {
     if (!$this->loaded || $force_load) {
-      $params = array(
+      $params = [
         'contact_id' => $this->contact_id,
         'sequential' => TRUE,
-      );
+      ];
       // Never load expired data.
       if ($min_cached_timestamp = self::getMinCacheTimestamp()) {
-        $params['cached'] = array('>=' => $min_cached_timestamp);
+        $params['cached'] = ['>=' => $min_cached_timestamp];
       }
       $result = _activityical_civicrmapi('activityical_cache', 'get', $params);
       if ($result['count']) {
@@ -34,35 +34,35 @@ class CRM_Activityical_Cache {
   }
 
   public function clear() {
-    $params = array(
+    $params = [
       'contact_id' => $this->contact_id,
-    );
+    ];
     $result = _activityical_civicrmapi('activityical_cache', 'get', $params);
     $id = $result['id'] ?? NULL;
 
     if ($id) {
-      $params = array(
+      $params = [
         'id' => $result['id'],
-      );
+      ];
       _activityical_civicrmapi('activityical_cache', 'delete', $params);
     }
   }
 
   public static function clearAll() {
-    _activityical_civicrmapi('activityical_cache', 'clearall', array());
+    _activityical_civicrmapi('activityical_cache', 'clearall', []);
   }
 
   public function store($cache) {
-    $params = array(
+    $params = [
       'contact_id' => $this->contact_id,
-    );
+    ];
     $result = _activityical_civicrmapi('activityical_cache', 'get', $params);
 
-    $params = array(
+    $params = [
       'id' => $result['id'] ?? NULL,
       'contact_id' => $this->contact_id,
       'cache' => $cache,
-    );
+    ];
     _activityical_civicrmapi('activityical_cache', 'create', $params);
 
     $this->cache = $cache;
@@ -70,11 +70,11 @@ class CRM_Activityical_Cache {
 
   public static function getMinCacheTimestamp() {
     // Get configured max cache lifetime (in minutes).
-    $api_params = array(
-      'return' => array(
+    $api_params = [
+      'return' => [
         'activityical_cache_lifetime',
-      ),
-    );
+      ],
+    ];
     $result = _activityical_civicrmapi('setting', 'get', $api_params);
     if ($cache_lifetime_minutes = $result['values'][CRM_Core_Config::domainID()]['activityical_cache_lifetime'] ?? 0) {
       $time = time();

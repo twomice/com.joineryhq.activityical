@@ -12,10 +12,10 @@ use CRM_Activityical_ExtensionUtil as E;
  */
 class CRM_Activityical_Form_Settings extends CRM_Core_Form {
 
-  public static $settingFilter = array('group' => 'activityical');
+  public static $settingFilter = ['group' => 'activityical'];
   public static $extensionName = 'com.joineryhq.activityical';
-  private $_submittedValues = array();
-  private $_settings = array();
+  private $_submittedValues = [];
+  private $_settings = [];
 
   public function __construct(
     $state = NULL,
@@ -86,19 +86,19 @@ class CRM_Activityical_Form_Settings extends CRM_Core_Form {
         $rules_args = (array) $setting['X_form_rules_args'];
         foreach ($rules_args as $rule_args) {
           array_unshift($rule_args, $setting['name']);
-          call_user_func_array(array($this, 'addRule'), $rule_args);
+          call_user_func_array([$this, 'addRule'], $rule_args);
         }
       }
     }
     $this->assign("descriptions", $descriptions);
 
-    $this->addButtons(array(
-      array(
+    $this->addButtons([
+      [
         'type' => 'submit',
         'name' => E::ts('Submit'),
         'isDefault' => TRUE,
-      ),
-    ));
+      ],
+    ]);
 
     $style_path = CRM_Core_Resources::singleton()->getPath(self::$extensionName, 'css/extension.css');
     if ($style_path) {
@@ -126,7 +126,7 @@ class CRM_Activityical_Form_Settings extends CRM_Core_Form {
     // auto-rendered in the loop -- such as "qfKey" and "buttons". These
     // items don't have labels. We'll identify renderable by filtering on
     // the 'label'.
-    $elementNames = array();
+    $elementNames = [];
     foreach ($this->_elements as $element) {
       $label = $element->getLabel();
       if (!empty($label)) {
@@ -147,7 +147,7 @@ class CRM_Activityical_Form_Settings extends CRM_Core_Form {
   }
 
   public static function getSettings() {
-    $settings = _activityical_civicrmapi('setting', 'getfields', array('filters' => self::$settingFilter));
+    $settings = _activityical_civicrmapi('setting', 'getfields', ['filters' => self::$settingFilter]);
     return $settings['values'];
   }
 
@@ -177,33 +177,33 @@ class CRM_Activityical_Form_Settings extends CRM_Core_Form {
    * @see CRM_Core_Form::setDefaultValues()
    */
   public function setDefaultValues() {
-    $result = _activityical_civicrmapi('setting', 'get', array('return' => array_keys($this->_settings)));
+    $result = _activityical_civicrmapi('setting', 'get', ['return' => array_keys($this->_settings)]);
     $domainID = CRM_Core_Config::domainID();
     $ret = $result['values'][$domainID] ?? [];
     return $ret;
   }
 
   public static function getGroupOptions() {
-    $options = array();
-    $result = _activityical_civicrmapi('Group', 'get', array(
+    $options = [];
+    $result = _activityical_civicrmapi('Group', 'get', [
       'is_active' => 1,
-      'options' => array('limit' => 0),
-    ));
+      'options' => ['limit' => 0],
+    ]);
     foreach ($result['values'] as $id => $value) {
       $options[$id] = $value['title'];
     }
     asort($options);
-    $options = array(0 => '- ' . E::ts('none') . ' -') + $options;
+    $options = [0 => '- ' . E::ts('none') . ' -'] + $options;
     return $options;
   }
 
   public static function getActivityTypeOptions() {
-    $options = array();
-    $result = _activityical_civicrmapi('OptionValue', 'get', array(
+    $options = [];
+    $result = _activityical_civicrmapi('OptionValue', 'get', [
       'option_group_id' => "activity_type",
       'is_active' => 1,
-      'options' => array('limit' => 0),
-    ));
+      'options' => ['limit' => 0],
+    ]);
     foreach ($result['values'] as $id => $value) {
       $options[$value['value']] = $value['label'];
     }
@@ -212,12 +212,12 @@ class CRM_Activityical_Form_Settings extends CRM_Core_Form {
   }
 
   public static function getActivityStatusOptions() {
-    $options = array();
-    $result = _activityical_civicrmapi('OptionValue', 'get', array(
+    $options = [];
+    $result = _activityical_civicrmapi('OptionValue', 'get', [
       'option_group_id' => "activity_status",
       'is_active' => 1,
-      'options' => array('limit' => 0),
-    ));
+      'options' => ['limit' => 0],
+    ]);
     foreach ($result['values'] as $id => $value) {
       $options[$value['value']] = $value['label'];
     }

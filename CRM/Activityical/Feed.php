@@ -6,7 +6,7 @@ class CRM_Activityical_Feed {
   protected $timezone_string;
   private $query_params;
   private $hash;
-  private static $instances = array();
+  private static $instances = [];
 
   protected function  __construct($contact_id, $query_params = NULL) {
     $this->contact_id = $contact_id;
@@ -24,10 +24,10 @@ class CRM_Activityical_Feed {
   }
 
   private function load() {
-    $params = array(
+    $params = [
       'contact_id' => $this->contact_id,
       'sequential' => 1,
-    );
+    ];
     $result = _activityical_civicrmapi('activityical_contact', 'get', $params);
 
     if ($result['count'] && $hash = $result['values'][0]['hash'] ?? NULL) {
@@ -41,11 +41,11 @@ class CRM_Activityical_Feed {
   private function setQueryParams($query_params = NULL) {
     // No need to do this more than once per instance.
     if (!isset($this->query_params)) {
-      $supported_params = array(
+      $supported_params = [
         'pdays' => 'integer',
         'fdays' => 'integer',
         'nocache' => 'integer',
-      );
+      ];
       if ($query_params === NULL) {
         $params = array_intersect_key($_GET, $supported_params);
         foreach ($params as $key => $value) {
@@ -68,42 +68,42 @@ class CRM_Activityical_Feed {
 
   public function generateHash() {
     // Ensure we have permission to do this.
-    $perm = CRM_Activityical_Permission::singleton(array('contact_id' => $this->contact_id));
+    $perm = CRM_Activityical_Permission::singleton(['contact_id' => $this->contact_id]);
     if (!$perm->manageFeedDetails()) {
       CRM_Utils_System::permissionDenied();
     }
     $hash = md5(mt_rand(0, 10000000) . microtime());
 
-    $params = array(
+    $params = [
       'contact_id' => $this->contact_id,
-    );
+    ];
     $result = _activityical_civicrmapi('activityical_contact', 'get', $params);
     $id = $result['id'] ?? NULL;
 
-    $params = array(
+    $params = [
       'id' => $id,
       'contact_id' => $this->contact_id,
       'hash' => $hash,
-    );
+    ];
     $result = _activityical_civicrmapi('activityical_contact', 'create', $params);
 
     $this->hash = $hash;
   }
 
   public function validateHash($hash) {
-    $params = array(
+    $params = [
       'contact_id' => $this->contact_id,
       'hash' => $hash,
-    );
+    ];
     $result = _activityical_civicrmapi('activityical_contact', 'get', $params);
     return (bool) $result['count'];
   }
 
   public function getUrl() {
-    $url_query = array(
+    $url_query = [
       'cid' => $this->contact_id,
       'key' => $this->getHash(),
-    );
+    ];
     $url = CRM_Utils_System::url('civicrm/activityical/feed', $url_query, TRUE, NULL, FALSE, TRUE);
     return $url;
   }
@@ -116,26 +116,26 @@ class CRM_Activityical_Feed {
   }
 
   public function getData() {
-    $return = array();
+    $return = [];
 
     // Retreive relevant extension settings.
-    $api_params = array(
-      'return' => array(
+    $api_params = [
+      'return' => [
         'activityical_description_append_targets',
         'activityical_description_append_assignees',
         'activityical_past_days',
         'activityical_future_days',
         'activityical_activity_type_ids',
         'activityical_activity_status_ids',
-      ),
-    );
+      ],
+    ];
     $result = _activityical_civicrmapi('setting', 'get', $api_params);
     $settings = $result['values'][CRM_Core_Config::domainID()];
 
     // Set up placeholders for CiviCRM query. CiviCRM's query method doesn't
     // have anything like Drupals db_placeholders, so we do it ourselves here.
-    $placeholders = $params = array();
-    $placeholders['status'] = array();
+    $placeholders = $params = [];
+    $placeholders['status'] = [];
     $placeholder_count = 1;
 
     // Placeholders for blocked statuses
@@ -149,19 +149,19 @@ class CRM_Activityical_Feed {
     foreach ($blocked_status_values as $value) {
       $i = $placeholder_count++;
       $placeholders['status'][] = '%' . $i;
-      $params[$i] = array(
+      $params[$i] = [
         $value,
         'Integer',
-      );
+      ];
     }
 
     // Placeholder for contact_id
     $i = $placeholder_count++;
     $placeholders['contact_id'] = '%' . $i;
-    $params[$i] = array(
+    $params[$i] = [
       $this->contact_id,
       'Integer',
-    );
+    ];
 
     // Add limits for pdays/activityical_past_days
     if (is_array($this->query_params) && array_key_exists('pdays', $this->query_params)) {
@@ -172,10 +172,10 @@ class CRM_Activityical_Feed {
     }
     $i = $placeholder_count++;
     $placeholders['activityical_past_days'] = '%' . $i;
-    $params[$i] = array(
+    $params[$i] = [
       $activityical_past_days,
       'Integer',
-    );
+    ];
 
     // Add limits for fdays/activityical_future_days
     if (is_array($this->query_params) && array_key_exists('fdays', $this->query_params)) {
@@ -186,34 +186,34 @@ class CRM_Activityical_Feed {
     }
     $i = $placeholder_count++;
     $placeholders['activityical_future_days'] = '%' . $i;
-    $params[$i] = array(
+    $params[$i] = [
       $activityical_future_days,
       'Integer',
-    );
+    ];
 
     // Create a WHERE clause component for the 'activityical_activity_type_ids' setting.
-    $extra_wheres = array();
+    $extra_wheres = [];
     if (!empty($settings['activityical_activity_type_ids']) && is_array($settings['activityical_activity_type_ids'])) {
-      $placeholders['activity_type_id'] = array();
+      $placeholders['activity_type_id'] = [];
       foreach ($settings['activityical_activity_type_ids'] as $activity_type_id) {
         $i = $placeholder_count++;
         $placeholders['activity_type_id'][] = '%' . $i;
-        $params[$i] = array(
+        $params[$i] = [
           $activity_type_id,
           'Integer',
-        );
+        ];
       }
       $extra_wheres[] = 'AND civicrm_activity.activity_type_id IN (' . implode(',', $placeholders['activity_type_id']) . ')';
     }
     if (!empty($settings['activityical_activity_status_ids']) && is_array($settings['activityical_activity_status_ids'])) {
-      $placeholders['activity_status_id'] = array();
+      $placeholders['activity_status_id'] = [];
       foreach ($settings['activityical_activity_status_ids'] as $activity_status_id) {
         $i = $placeholder_count++;
         $placeholders['activity_status_id'][] = '%' . $i;
-        $params[$i] = array(
+        $params[$i] = [
           $activity_status_id,
           'Integer',
-        );
+        ];
       }
       $extra_wheres[] = 'AND civicrm_activity.status_id IN (' . implode(',', $placeholders['activity_status_id']) . ')';
     }
@@ -298,7 +298,7 @@ class CRM_Activityical_Feed {
     while ($dao->fetch()) {
       $row = $dao->toArray();
 
-      $description = array();
+      $description = [];
       if ($row['activity_details']) {
         $description[] = $row['activity_details'];
       }
@@ -350,11 +350,11 @@ class CRM_Activityical_Feed {
     }
     else {
       // Check if we're configured to use caching.
-      $api_params = array(
-        'return' => array(
+      $api_params = [
+        'return' => [
           'activityical_cache_lifetime',
-        ),
-      );
+        ],
+      ];
       $result = _activityical_civicrmapi('setting', 'get', $api_params);
       $use_cache = (bool) $result['values'][CRM_Core_Config::domainID()]['activityical_cache_lifetime'] ?? 0;
     }
@@ -363,11 +363,11 @@ class CRM_Activityical_Feed {
 
   public function getFeed() {
     // Determine whether to include the link (URL) to the CiviCRM activity view.
-    $api_params = array(
-      'return' => array(
+    $api_params = [
+      'return' => [
         'activityical_include_url',
-      ),
-    );
+      ],
+    ];
     $result = _activityical_civicrmapi('setting', 'get', $api_params);
     $include_url = (bool) ($result['values'][CRM_Core_Config::domainID()]['activityical_include_url'] ?? 1);
 
@@ -416,13 +416,13 @@ class CRM_Activityical_Feed {
   }
 
   public static function getBlockedStatuses() {
-    $blocked_statuses = array(
+    $blocked_statuses = [
       'Completed',
       'Cancelled',
       'Left Message',
       'Unreachable',
       'Not Required',
-    );
+    ];
     return $blocked_statuses;
   }
 
@@ -452,10 +452,10 @@ class CRM_Activityical_Feed {
     // If timezones can be configurable per user, get the user's timezone setting.
     if (variable_get('configurable_timezones', 1)) {
       // Get the global user if no uid is given.
-      $result = _activityical_civicrmapi('UFMatch', 'get', array(
+      $result = _activityical_civicrmapi('UFMatch', 'get', [
         'sequential' => 1,
         'contact_id' => $this->contact_id,
-      ));
+      ]);
       if (!empty($result['values'])) {
         $uid = $result['values'][0]['uf_id'];
         $user = user_load($uid);
@@ -480,10 +480,10 @@ class CRM_Activityical_Feed {
     $configurable_timezones = \Drupal::config('system.date')->get('timezone.user.configurable');
     if ($configurable_timezones == 1) {
       // Get the global user if no uid is given.
-      $result = _activityical_civicrmapi('UFMatch', 'get', array(
+      $result = _activityical_civicrmapi('UFMatch', 'get', [
         'sequential' => 1,
         'contact_id' => $this->contact_id,
-      ));
+      ]);
       if (!empty($result['values'])) {
         $uid = $result['values'][0]['uf_id'];
         $user = \Drupal\user\Entity\User::load($uid);
@@ -505,10 +505,10 @@ class CRM_Activityical_Feed {
 
   public function getTimezoneString_Joomla() {
     $timezone_string = '';
-    $result = _activityical_civicrmapi('UFMatch', 'get', array(
+    $result = _activityical_civicrmapi('UFMatch', 'get', [
       'sequential' => 1,
       'contact_id' => $this->contact_id,
-    ));
+    ]);
     if (!empty($result['values'])) {
       $uid = $result['values'][0]['uf_id'];
       $user = JFactory::getUser($uid);
