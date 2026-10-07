@@ -382,7 +382,6 @@ class CRM_Activityical_Feed {
     }
 
     // Require a file from CiviCRM's dynamic include path.
-    require_once 'CRM/Core/Smarty.php';
     $tpl = CRM_Core_Smarty::singleton();
     $tpl->assign('activities', $activities);
     $tpl->assign('include_url', $include_url);
